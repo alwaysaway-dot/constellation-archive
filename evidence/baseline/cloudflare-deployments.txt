@@ -1,0 +1,41 @@
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+
+
+
+ ⛅️ wrangler 4.151.0
+────────────────────
+Created:     2026-10-15T23:43:30.858Z
+Author:      liu1773237975@gmail.com
+Source:      Upload
+Message:     Automatic deployment on upload.
+Version(s):  (100%) e487272a-e0e6-4a70-aca9-ce6fa23ecdd8
+                 Created:  2026-10-15T23:43:30.858Z
+                     Tag:  -
+                 Message:  -
+
+Created:     2026-10-16T02:38:54.286Z
+Author:      liu1773237975@gmail.com
+Source:      Unknown (deployment)
+Message:     -
+Version(s):  (100%) d593577f-dd12-4bae-a105-0994adc79b74
+                 Created:  2026-10-16T02:38:53.387Z
+                     Tag:  -
+                 Message:  -
+
+Created:     2026-10-16T03:33:45.801Z
+Author:      liu1773237975@gmail.com
+Source:      Unknown (deployment)
+Message:     -
+Version(s):  (100%) 9b6c382c-a3d8-40d7-a868-35d26ae0e728
+                 Created:  2026-10-16T03:33:45.122Z
+                     Tag:  -
+                 Message:  -
+
+Created:     2026-10-16T12:51:16.097Z
+Author:      liu1773237975@gmail.com
+Source:      Unknown (deployment)
+Message:     -
+Version(s):  (100%) 9bb5f8e7-961c-4242-8e61-edb0f68e617d
+                 Created:  2026-10-16T12:51:15.277Z
+                     Tag:  -
+                 Message:  -

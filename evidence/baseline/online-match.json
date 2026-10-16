@@ -1,0 +1,256 @@
+{
+  "url": "https://alwaysaway-music.liu1773237975.workers.dev/",
+  "assets": [
+    {
+      "path": "artwork/01-official.png",
+      "sha256": "e300bf5c919846cd2e27a5e06793be35dfd135c051d00a5a0ea1a83cabb97780",
+      "matches": true
+    },
+    {
+      "path": "artwork/02-official.png",
+      "sha256": "3d398b7df2a7e5783fc3a5fa041bbb8e38064fa64ae7ea6d7182f1dbc9d26af6",
+      "matches": true
+    },
+    {
+      "path": "artwork/03-official.png",
+      "sha256": "bdfd59f86f2349da0a73bc8e494927cc9c7ed684506d907b0bd1fd9f4be368d5",
+      "matches": true
+    },
+    {
+      "path": "artwork/04-official.png",
+      "sha256": "0bf60b9f9858fd9e206fe901dbc65f7f60b88cb4b59038479519ba3d4c622605",
+      "matches": true
+    },
+    {
+      "path": "artwork/05-official.png",
+      "sha256": "3fb29db05c4a1868f286aa3d81e7a5099ddf6766035887a009752267fbb031af",
+      "matches": true
+    },
+    {
+      "path": "artwork/06-official.png",
+      "sha256": "db11f7e24ae6cc687c166ab2b431efdcf65369f3e9f032222f726ffcf32bab51",
+      "matches": true
+    },
+    {
+      "path": "artwork/07-official.png",
+      "sha256": "e3e2adcd622d59e962b26dbbd64c25c1fd219ae3c4bbf6e96b386373a450d8f5",
+      "matches": true
+    },
+    {
+      "path": "artwork/08-official.jpg",
+      "sha256": "816109001d5ccbee3521c0aa32597b46e12e4558a8aedc0abaedd01541566545",
+      "matches": true
+    },
+    {
+      "path": "artwork/09-official.png",
+      "sha256": "14be2d2b52aa64c6ca455e3c7f51a612b41c5df4796a23b7a1b02c0e69c9ea55",
+      "matches": true
+    },
+    {
+      "path": "artwork/chikina-official.png",
+      "sha256": "55bc88f3c743a64a8e1311b45aa3376d3791d41b547e63a413a1b43355796129",
+      "matches": true
+    },
+    {
+      "path": "assets/GravityRenderer-OD9NbujQ.js",
+      "sha256": "2b2c2023647250d5f525092fedfa873a5a8da00718534bbb02fa76f3b37b56fb",
+      "matches": true
+    },
+    {
+      "path": "assets/index-CrwN-3q2.css",
+      "sha256": "5ca96f1d2fe778a45fe26d9a36ea1be2e88d4fbfb74dd4d0062d0e18e471e01e",
+      "matches": true
+    },
+    {
+      "path": "assets/index-DIC_6F6Z.js",
+      "sha256": "94b9f04f6fa57544ed0299149fca0d26fea0f9a354ba10771187587e154a0450",
+      "matches": true
+    },
+    {
+      "path": "audio/a-violet-afterglow.mp3",
+      "sha256": "b47fe5ad80f85c49a5fda859dfb447639a6e696b7b58f6a4ce29cda59e7687bc",
+      "matches": true
+    },
+    {
+      "path": "audio/afterimage.mp3",
+      "sha256": "bc16aa21e22e688fc014fee55241af8b4a22d7ab70a866ad94da921b85b11a5c",
+      "matches": true
+    },
+    {
+      "path": "audio/almost-there.mp3",
+      "sha256": "f144bbfa2f4a4eb4cdaeb85e41482fed8b639fa00c0e1bb267aa7f48bcb61557",
+      "matches": true
+    },
+    {
+      "path": "audio/chikina.mp3",
+      "sha256": "09bc0b868db09159d7543b4438cde7488cb601aa6089ad78ad442a8f7c1cc328",
+      "matches": true
+    },
+    {
+      "path": "audio/greenwich.mp3",
+      "sha256": "0902cc99d140d08be9f821163c4d4a524e0a6b3cba905bc1f843ad9a73b9c554",
+      "matches": true
+    },
+    {
+      "path": "audio/hallway.mp3",
+      "sha256": "ac7b2b10127fa64b7fc549b285a32b7de514b177ee41b17731ff2461cc96c8d4",
+      "matches": true
+    },
+    {
+      "path": "audio/meng-bu-shi-ren-lao.mp3",
+      "sha256": "fe951fc8da04b7dac3df8093c53fbc3b3dbe870a56e930679fa01ebdf6dccf33",
+      "matches": true
+    },
+    {
+      "path": "audio/minority-of-one.mp3",
+      "sha256": "607cb88399c8fd6c196ffa7058864ba96bec38210f83e8c66453daab6bab06ba",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-10.mp3",
+      "sha256": "8302c010068725d1cc1df919a4717086e4c692bc38c6d73db49ece942ddeb430",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-12.mp3",
+      "sha256": "dd180d36be0daddd062926192bcf166efd26e5e98c151146fd3523c5aaa1cfc2",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-14.mp3",
+      "sha256": "7b484ceabbeedd3f2c7553d19825cc52dae60867fdeccced0775f8d0389e667a",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-16.mp3",
+      "sha256": "be18d4e64f6021ae1654ae9d9a00da6272096ac30820d9c28b05ceba5a9cb0ff",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-17.mp3",
+      "sha256": "99cd8b61983887d4995f72594668be9182b42987e3dccda0380324b589896d38",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-18.mp3",
+      "sha256": "94c23ef436375da5c5b79d1f2e802207df99a70112ce34c20e297be71cb9b2cf",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-19.mp3",
+      "sha256": "6211fac1eaa20e97c5dd2b026db3bed2360811d964c3b2d8530e46645bba7c59",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-20.mp3",
+      "sha256": "318cea01dd5fc5a0088ae37ce8debd04a221296f31963a745899f6801d99741e",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-21.mp3",
+      "sha256": "156135a08b27e1dd712872f612ff1c1d3f763a560e4bb6ae98a11f3b64166ef3",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-22.mp3",
+      "sha256": "390f4df851ec10701192dc6e6bb2b34258fa1a75c749b96f550cb54c6a7f073b",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-23.mp3",
+      "sha256": "23a2c8c821cf1e328a1a82cd44bffccec09f24be5980bf91c8519e185ef084a3",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-24.mp3",
+      "sha256": "b3d1a33ec60c1bd6e644fc83caea1736ceae1f5b02c07671b0b2c07ec9754eb9",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-26.mp3",
+      "sha256": "5fe9b0fa66983b7e6c97081bcf3e65212667895bb7f87da85a6d0f6453c46682",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-27.mp3",
+      "sha256": "18b7d02c53e81713ab286e120a346710a08da00b9807d62eeeefa182924549e6",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-28.mp3",
+      "sha256": "001b1a1bda9ed30965f20d6674312f9fca81927759acc91392e566e27ff8af05",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-29.mp3",
+      "sha256": "baea14d99cd7c6eb0acd82c89a969c70cc68b63b69964f1fc1231c0ad7d746c0",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-30.mp3",
+      "sha256": "e278999e51868a12bb01fa83626b2d6451fd0587d67f24eac5efff2fecc2d917",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-31.mp3",
+      "sha256": "38a48e2a83a9d6ea60e5fc880b075064eab3b33e4fe1c1514e639f652b23ca47",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-32.mp3",
+      "sha256": "60c34e75b0faea4bbff104c8e235425e7b29f35dc8f9cb71a6b5ac56009bb0c6",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-33.mp3",
+      "sha256": "757c937ea87a9e2fded232faa1a3b58a358c9978e8f6093897542c1671d01b61",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-34.mp3",
+      "sha256": "a45e73dd61ecb986b781cc726a0c0a72e2e06cd22a84a04c2ddca41755918ab6",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-35.mp3",
+      "sha256": "3e73375b0ebf5d124daaa186220cd4180b499d886f6a711647f59d835926dfe7",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-36.mp3",
+      "sha256": "b8b0fcefefed2a6301cf7b4d90023bd14b26233e54abb9a423aaad3806bd669a",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-37.mp3",
+      "sha256": "78b11b6d3ae3ce6b9288e56c20f5492ad22f5b2b5b67cd90ef436c27ca2ee7f0",
+      "matches": true
+    },
+    {
+      "path": "audio/previews/preview-38.mp3",
+      "sha256": "005866c40911d5321c262fa1152fac3eb9dc14b609fc21086b1cc45a05142e16",
+      "matches": true
+    },
+    {
+      "path": "audio/through-the-past.mp3",
+      "sha256": "e6edcf1bba5d1aac23b56ab8555293aca4240dc78b1624af1fbfb78729a8453b",
+      "matches": true
+    },
+    {
+      "path": "audio/wuwo.mp3",
+      "sha256": "e5b2537d8d8b65d1ba121e136a291380a0926c8b7e143105d8488fa31c2d3b61",
+      "matches": true
+    },
+    {
+      "path": "favicon.svg",
+      "sha256": "b0254c0f519a9d97bae6b341c4420fab7a6c3d60bbf58b8efc25928d0dbdae68",
+      "matches": true
+    },
+    {
+      "path": "index.html",
+      "sha256": "9511f5f35e8e3810c46355bd54bd0accb977bfe4f782d0b3aebfc12a2094582e",
+      "matches": true
+    }
+  ],
+  "passed": true
+}

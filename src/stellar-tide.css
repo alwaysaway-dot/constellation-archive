@@ -1,0 +1,11 @@
+/* Detail-only instrument. The canvas has no hit targets and never represents time. */
+.listen .listen-controls{isolation:isolate;min-height:112px;margin:12px 0 5px;padding:20px 0}
+.stellar-tide{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1}
+.listen .play-big.orbit-play{width:68px;height:68px;border:1px solid #9fbccc65;background:#080d14;box-shadow:none;color:#c9d9e3;transition:border-color .22s,color .22s}
+.listen .play-big.orbit-play:before{display:none}
+.listen .play-big.orbit-play:after{inset:5px;border:1px solid #bed3df13;transform:none;animation:none}
+.listen .play-big.orbit-play.is-playing{border-color:#aac8d77a;color:#e0e9ed}
+.listen .play-big.orbit-play.is-playing:after{animation:none}
+.listen .play-big.orbit-play:hover{border-color:#c8ddebb3;color:#fff;box-shadow:none}
+.listen .play-big.orbit-play:focus-visible{outline-offset:6px}
+@media(max-width:700px){.listen .listen-controls{min-height:100px;padding:18px 0;margin:8px 0 2px}.listen .play-big.orbit-play{width:62px;height:62px}}

@@ -1,0 +1,14 @@
+{
+  "product": "Cloudflare Workers Static Assets + audio Range adapter",
+  "name": "alwaysaway-music",
+  "url": "https://alwaysaway-music.liu1773237975.workers.dev",
+  "versionId": "9bb5f8e7-961c-4242-8e61-edb0f68e617d",
+  "sourceVersion": "9d4783236c7c2880bd2b785759cc1375aaf1711447c25c2c4623e89dd8d32be6",
+  "customDomain": false,
+  "assets": 50,
+  "packageMiB": 111.67,
+  "previousUrl": "https://constellation-archive.liu1773237975.workers.dev",
+  "originalDeploymentArchiveSha256": "c3c2c7ee7d98a7291f84d04329b88d3db15e3e870adf8a1ed80dc65626e05a88",
+  "previousVersionId": "9b6c382c-a3d8-40d7-a868-35d26ae0e728",
+  "release": "gravity-voyage-2026-10-16"
+}

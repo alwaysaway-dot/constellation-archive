@@ -1,0 +1,64 @@
+/* Online UX review V1: scoped controls and spacing; scene geometry unchanged. */
+.preview-drawer{height:100dvh;overscroll-behavior:none;touch-action:pan-y}
+.preview-panel{overscroll-behavior:none;-webkit-overflow-scrolling:touch}
+.app:has(.preview-drawer[open],.navigation-veil[open]) .mini-player{visibility:hidden;pointer-events:none}
+.app.has-mini-player{padding-bottom:var(--mini-space,170px)}
+body:has(.mini-player) .app .footer{padding-bottom:30px}
+body:has(.mini-player) .app .hero-bottom{padding-bottom:0}
+.mini-player{display:grid;grid-template-columns:42px minmax(100px,1fr) auto minmax(80px,160px) 44px 44px;max-width:880px;gap:12px}
+.mini-player .mini-title{white-space:normal;text-align:left;padding:0;min-height:44px}
+.mini-title strong{white-space:normal;overflow:visible;overflow-wrap:anywhere;line-height:1.45}
+.mini-player .mini-title .mono{font-size:10px;color:#a6bac9;letter-spacing:.5px}
+.mini-close{display:grid;place-items:center;width:44px;height:44px;color:#a7bac9}
+.mini-close:hover{color:#e2ecf3}
+.mini-close .line-icon{width:18px;height:18px}
+.quick-listen{text-align:left;min-height:44px;color:#a9bccb;max-width:220px}
+.quick-listen>span{display:block;line-height:1.65}
+.quick-listen small{display:block;font-size:11px;line-height:1.5;color:#9aacbb;margin-top:3px;letter-spacing:0}
+.listen-bottom{gap:16px;align-items:flex-start;line-height:1.8;color:#a4b6c6}
+.listen-bottom>span:first-child{flex:1;min-width:0}
+.listen-bottom>span[role=alert]{color:#ddc4a4}
+.breadcrumbs{color:#9aaebf;margin-bottom:0}
+.breadcrumbs button{min-height:44px}
+.detail>.back-link{font-size:11px;color:#8fa6b9;min-height:44px}
+.detail-end{padding:24px 0 44px}
+.detail-end .text-button{min-height:44px;color:#afc2d1}
+.catalogue-page{padding-top:28px}
+.catalogue-tools{margin-top:22px}
+.catalogue-preview-note{margin:16px 0 12px;color:#b1bfcb;font-size:12px}
+.catalogue-preview-note small{font-size:11px;color:#93a8b9;margin-top:3px}
+.results-count{margin:12px 0;font-size:12px;color:#9db0bf}
+.work-index,.work-kind{color:#a5b8c7}
+.preview-playback-status{font-size:12px;color:#b6c7d5}
+.header .desktop-nav button{color:#99abba}
+.header .menu-toggle{color:#8fa4b5}
+.footer .mono{font-size:9px}
+@media(max-width:700px){
+ .mini-player{grid-template-columns:34px minmax(0,1fr) 44px 44px;gap:4px 9px;padding:10px 12px}
+ .mini-player>img{grid-column:1;grid-row:1/3}
+ .mini-title{grid-column:2;grid-row:1}
+ .mini-player .mini-time{grid-column:2;grid-row:2;font-size:10px}
+ .mini-play{grid-column:3;grid-row:1/3}
+ .mini-close{grid-column:4;grid-row:1/3}
+ .mini-player input{grid-column:1/-1;grid-row:3;height:30px}
+ .mini-player .mini-title .mono{font-size:9px}
+ .mini-title strong{font-size:12px}
+ .quick-listen{font-size:12px!important;max-width:190px}
+ .quick-listen small{font-size:11px}
+ .hero-actions{flex-wrap:wrap;row-gap:16px}
+ .catalogue-page{padding-top:26px}
+ .catalogue-tools{margin-top:20px}
+ .catalogue-preview-note{font-size:12px;line-height:1.8}
+ .work-index{font-size:10px}
+ .work-kind{font-size:10px}
+ .listen-bottom{font-size:11px}
+ .listen-bottom>span:last-child{font-size:10px;max-width:92px;text-align:right}
+}
+@media(max-width:360px){.work-kind{display:block;font-size:10px;max-width:22px;line-height:1.5}.work-row{gap:8px}.mini-player{gap:4px 6px}}
+
+.gravity-home .fallback-notice{left:7%;top:195px;bottom:auto;font-size:11px;color:#9eb0bf}
+/* Keep Korean words intact; long unbroken titles may still wrap to fit. */
+.unified-detail .detail-intro h1{word-break:keep-all;overflow-wrap:anywhere}
+/* Keep the interaction hint below the star labels, without moving any anchors. */
+.gravity-map{margin-bottom:76px}
+.gravity-map .orbit-guide{top:100%;bottom:auto;min-height:60px}
