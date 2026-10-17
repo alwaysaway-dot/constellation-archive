@@ -8,3 +8,6 @@ dist/
 .dev.vars*
 work/
 outputs/
+
+# A shared local dependency directory may be a symlink.
+node_modules

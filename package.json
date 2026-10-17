@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "build:production": "npm run build && node scripts/prepare-cloudflare.mjs",
     "deploy:production": "wrangler deploy",
-    "preview:production": "wrangler dev --ip 127.0.0.1 --port 4180"
+    "preview:production": "wrangler dev --ip 127.0.0.1 --port 4180",
+    "deploy:preview": "wrangler deploy --config wrangler.preview.jsonc"
   },
   "dependencies": {
     "react": "^19.1.0",

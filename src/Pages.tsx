@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {otherSongs,featuredSongs,albumById,featuredNumber,type Song} from './content';
 import {Listen,type Player} from './PlayerControls';
 import {Icon} from './Icons';
+import {CoverImage,imprintColor} from './Imprint';
 import {PreviewDrawer} from './PreviewDrawer';
 type Navigation = {navigate:(to:string)=>void;enter:(id:number)=>void};
 function AlbumAttribution({song}:{song:Song}) {
@@ -10,18 +11,18 @@ function AlbumAttribution({song}:{song:Song}) {
 export function SongDetail({work,player,reduced,navigate,enter,returnTo}:{work:Song;player:Player;reduced:boolean;returnTo:string}&Navigation){
  const peers=featuredSongs.filter(s=>s.id!==work.id).slice(0,3);
  const lyricGroups=work.lyricGroups?.filter(group=>group.length);
- const returnLabel=returnTo==='works'?'全部作品':'星图';
- return <article className={`detail unified-detail ${work.interpretation?.length?'complete-song':''}`} data-work-id={work.id}>
- <nav className="breadcrumbs" aria-label="面包屑"><button onClick={()=>navigate('home')}>首页</button><span>/</span><button onClick={()=>navigate('map')}>星图档案</button><span>/</span><span aria-current="page">{work.title}</span></nav>
+ const returnLabel=returnTo==='works'?'全部作品':returnTo==='home'?'首页':returnTo==='exhibit'?'作品展陈':'星图';
+ return <article className={`detail unified-detail ${work.interpretation?.length?'complete-song':''}`} data-work-id={work.id} style={{'--work-tone':imprintColor(work.id)} as React.CSSProperties}>
+ <nav className="breadcrumbs" aria-label="面包屑"><button onClick={()=>navigate('home')}>首页</button><span>/</span><button onClick={()=>navigate(returnTo==='map'?'map':'exhibit')}>{returnTo==='map'?'星图探索':'精选展陈'}</button><span>/</span><span aria-current="page">{work.title}</span></nav>
  <button className="back-link" onClick={()=>navigate(returnTo)}><Icon kind="back"/>返回{returnLabel}</button>
- <section className="detail-hero"><div className={`artwork-wrap ${work.artworkKind==='official'?'official-artwork':''}`}><img className="main-artwork" src={work.art} alt={`${work.title} ${work.artworkKind==='concept'?'概念视觉，非正式封面':'正式封面'}`}/>{work.artworkKind==='concept'&&<div className="artwork-caption mono"><span>01 / 作品视觉</span><span>{work.artworkKind==='concept'?'概念视觉 · 非正式封面':'正式封面'}</span></div>}</div>
+ <section className="detail-hero"><div className={`artwork-wrap ${work.artworkKind==='official'?'official-artwork':''}`}><CoverImage className="main-artwork" song={work} eager/>{work.artworkKind==='concept'&&<div className="artwork-caption mono"><span>01 / 作品视觉</span><span>{work.artworkKind==='concept'?'概念视觉 · 非正式封面':'正式封面'}</span></div>}</div>
  <div className="detail-intro"><p className="eyebrow">{featuredNumber(work.id)?String(featuredNumber(work.id)).padStart(2,'0'):'档案'} / {work.featured?'精选作品':'其他作品'}</p><h1>{work.title}</h1>{work.dedication&&<div className="song-dedication"><p className="dedication-label">{work.dedication.label}</p><p>{work.dedication.text}</p></div>}<p className="genre">{work.subtitle||work.description}</p><AlbumAttribution song={work}/>
  {work.audio?<Listen player={player} reduced={reduced} title={work.title} songId={work.id} knownDuration={work.audioDuration}/>:<section className="listen unavailable"><p className="mono subtle">02 / 试听</p><p>试听音源待确认</p><small>作品资料整理中。</small></section>}</div></section>
  <section className={`editorial ${work.origin?'':'pending-section'}`}><div className="section-number">03 / {work.interpretation?'创作灵感':'创作缘起'}<span>{work.interpretation?'ORIGIN':'CREATIVE ORIGIN'}</span></div><div>{work.origin?(Array.isArray(work.origin)?work.origin:[work.origin]).map((paragraph,i)=><p key={i}>{paragraph}</p>):<p className="pending-copy">创作缘起待补充</p>}</div></section>
  {work.interpretation?.length&&<section className="editorial interpretation"><div className="section-number">04 / 主题叙述<span>INTERPRETATION</span></div><div>{work.interpretation.map((paragraph,i)=><p key={i}>{paragraph}</p>)}</div></section>}
  <section className={`editorial lyrics ${lyricGroups?.length||work.lyrics?.length?'':'pending-section'}`}><div className="section-number">{work.interpretation?'05':'04'} / 精选歌词<span>LYRIC FRAGMENTS</span></div><div className={lyricGroups?.length?'lyric-fragments':undefined}>{lyricGroups?.length?lyricGroups.map((group,i)=><blockquote key={i}>{group.map((line,j)=><p key={j}>{line}</p>)}</blockquote>):work.lyrics?.length?<blockquote>{work.lyrics.map((line,i)=><p key={i}>{line}</p>)}</blockquote>:<p className="pending-copy">经确认的原始歌词待补充</p>}</div></section>
  {work.showRelatedWorks!==false&&<section className="other-works"><div className="gallery-label"><h2>继续探索</h2><span>精选作品</span></div><div className="related-grid">{peers.map(song=><button key={song.id} onClick={()=>enter(song.id)}><img src={song.art} alt={`${song.title} ${song.artworkKind==='official'?'正式封面':'概念视觉'}`} loading="lazy" decoding="async"/><span>{song.title}</span><small>查看作品 <Icon kind="external"/></small></button>)}</div></section>}
- <div className="detail-end"><button className="text-button" onClick={()=>navigate('map')}><Icon kind="back"/>返回星图，继续探索</button></div>
+ <div className="detail-end"><button className="text-button" onClick={()=>navigate(returnTo)}><Icon kind="back"/>返回{returnLabel}，继续探索</button></div>
  </article>;
 }
 function SongRow({song,enter,show}:{song:Song;enter:Navigation['enter'];show:(song:Song)=>void}) {

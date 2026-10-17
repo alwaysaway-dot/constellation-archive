@@ -14,7 +14,7 @@ async function files(dir){let found=[];for(const e of await readdir(dir,{withFil
 await copyFile(resolve(root,'deploy/assets/artwork/08-official.jpg'),resolve(dist,'artwork/08-official.jpg'));
 for(const p of await files(dist)){
  const rel=relative(dist,p);
- if(rel.startsWith('assets/')&&/\.(js|css)$/.test(rel))required.add(rel);
+ if(rel.startsWith('assets/')&&/\.(js|css)$/.test(rel)||rel.startsWith('imprint/')&&rel.endsWith('.webp'))required.add(rel);
  else if(!required.has(rel))await rm(p); // Vite-generated output only; never touches public/source files.
 }
 await copyFile(resolve(root,'deploy/_headers'),resolve(dist,'_headers'));required.add('_headers');
@@ -25,7 +25,7 @@ for(const name of [...required].sort()){
  if(/\.(js|css|html|svg|json)$/.test(name)&&/\/Users\/|localhost:\d|127\.0\.0\.1|BEGIN (RSA |EC )?PRIVATE KEY|CLOUDFLARE_API_TOKEN\s*[:=]/.test(b.toString()))throw Error(`Private/development reference: ${name}`);
  entries.push({path:name,bytes:size,sha256:digest(b)});
 }
-const sourceFiles=[...await files(resolve(root,'src')),...await files(resolve(root,'scripts')),...await files(resolve(root,'deploy')), ...['package.json','package-lock.json','wrangler.jsonc','index.html','tsconfig.json'].map(p=>resolve(root,p))].sort();
+const sourceFiles=[...await files(resolve(root,'src')),...await files(resolve(root,'scripts')),...await files(resolve(root,'deploy')), ...['package.json','package-lock.json','wrangler.jsonc','wrangler.preview.jsonc','index.html','tsconfig.json'].map(p=>resolve(root,p))].sort();
 const hashes=[];for(const p of sourceFiles)hashes.push({path:relative(root,p),sha256:digest(await readFile(p))});
 const version=digest(JSON.stringify(hashes));
 await mkdir(resolve(root,'work/cloudflare'),{recursive:true});
