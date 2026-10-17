@@ -1,0 +1,668 @@
+{
+  "base": "https://alwaysaway-imprint-preview.liu1773237975.workers.dev",
+  "assets": [
+    {
+      "path": "artwork/01-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/02-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/03-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/04-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/05-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/06-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/07-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/08-official.jpg",
+      "status": 200,
+      "type": "image/jpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/09-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "artwork/chikina-official.png",
+      "status": 200,
+      "type": "image/png",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "assets/GravityRenderer-BmQm7PFr.js",
+      "status": 200,
+      "type": "text/javascript",
+      "cache": "public, max-age=31536000, immutable"
+    },
+    {
+      "path": "assets/index-CZBLqeFQ.js",
+      "status": 200,
+      "type": "text/javascript",
+      "cache": "public, max-age=31536000, immutable"
+    },
+    {
+      "path": "assets/index-i4ZjuQ9l.css",
+      "status": 200,
+      "type": "text/css",
+      "cache": "public, max-age=31536000, immutable"
+    },
+    {
+      "path": "audio/a-violet-afterglow.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/afterimage.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/almost-there.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/chikina.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/greenwich.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/hallway.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/meng-bu-shi-ren-lao.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/minority-of-one.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-10.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-12.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-14.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-16.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-17.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-18.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-19.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-20.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-21.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-22.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-23.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-24.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-26.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-27.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-28.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-29.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-30.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-31.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-32.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-33.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-34.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-35.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-36.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-37.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/previews/preview-38.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/through-the-past.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "audio/wuwo.mp3",
+      "status": 200,
+      "type": "audio/mpeg",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "favicon.svg",
+      "status": 200,
+      "type": "image/svg+xml",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/1-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/1-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/11-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/11-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/2-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/2-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/3-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/3-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/4-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/4-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/5-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/5-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/6-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/6-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/7-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/7-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/8-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/8-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/9-1200.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "imprint/9-480.webp",
+      "status": 200,
+      "type": "image/webp",
+      "cache": "public, max-age=0, must-revalidate"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "type": "text/html",
+      "cache": "public, max-age=0, must-revalidate"
+    }
+  ],
+  "ranges": [
+    {
+      "path": "audio/a-violet-afterglow.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/6913773",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/afterimage.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/4349421",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/almost-there.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/12826605",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/chikina.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/8954541",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/greenwich.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/7584813",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/hallway.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/7153389",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/meng-bu-shi-ren-lao.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/6241005",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/minority-of-one.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/5321709",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-10.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-12.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-14.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-16.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-17.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-18.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-19.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-20.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-21.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-22.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-23.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-24.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-26.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-27.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-28.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-29.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-30.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-31.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-32.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-33.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-34.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-35.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-36.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-37.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/previews/preview-38.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/721197",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/through-the-past.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/6217389",
+      "bytesMatch": true
+    },
+    {
+      "path": "audio/wuwo.mp3",
+      "status": 206,
+      "contentRange": "bytes 0-1023/6654573",
+      "bytesMatch": true
+    }
+  ],
+  "missing": [
+    {
+      "path": "/assets/missing.js",
+      "status": 404
+    },
+    {
+      "path": "/artwork/missing.png",
+      "status": 404
+    },
+    {
+      "path": "/audio/missing.mp3",
+      "status": 404
+    },
+    {
+      "path": "/.env",
+      "status": 404
+    },
+    {
+      "path": "/work/preview-review/selections.json",
+      "status": 404
+    },
+    {
+      "path": "/work/preview-review/audio/full-12.mp3",
+      "status": 404
+    },
+    {
+      "path": "/src/content.ts",
+      "status": 404
+    }
+  ],
+  "unsatisfiableRange": 416
+}

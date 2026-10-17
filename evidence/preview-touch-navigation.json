@@ -1,0 +1,22 @@
+{
+  "input": "CDP synthetic touchscreen; not physical iPhone",
+  "runs": [
+    {
+      "width": 390,
+      "homeSwipe": true,
+      "exhibitionSwipeWithoutAccidentalNavigation": true,
+      "tapAndReturn": true,
+      "directDetailSafeDefault": true,
+      "keyboardAndBrowserBack": true
+    },
+    {
+      "width": 320,
+      "homeSwipe": true,
+      "exhibitionSwipeWithoutAccidentalNavigation": true,
+      "tapAndReturn": true,
+      "directDetailSafeDefault": true,
+      "keyboardAndBrowserBack": true
+    }
+  ],
+  "passed": true
+}
