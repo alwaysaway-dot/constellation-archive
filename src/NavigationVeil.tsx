@@ -1,7 +1,7 @@
 import {useLayoutEffect,useRef} from 'react';
 import {Icon} from './Icons';
 import {lockPageScroll} from './lockPageScroll';
-const entries=[['home','首页','Home'],['map','星图档案','Constellation'],['works','全部作品','All Works']];
+const entries=[['home','首页','Home'],['map','星图','Constellation'],['other','其他作品','Other Works'],['about','关于','About']];
 export function NavigationVeil({page,close,navigate,reduced,systemReduced,chooseMotion}:{reduced:boolean;systemReduced:boolean;chooseMotion:(value:'full'|'reduced')=>void;page:string;close:()=>void;navigate:(page:string)=>void}){
  const ref=useRef<HTMLDialogElement>(null),latest=useRef(close);latest.current=close;
  useLayoutEffect(()=>{const dialog=ref.current!,focus=document.querySelector<HTMLElement>('.menu-toggle')||document.activeElement as HTMLElement;const unlock=lockPageScroll();dialog.showModal();return()=>{dialog.close();unlock();focus?.focus({preventScroll:true})}},[]);

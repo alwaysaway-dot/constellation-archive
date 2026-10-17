@@ -28,8 +28,8 @@ function SongRow({song,enter,show}:{song:Song;enter:Navigation['enter'];show:(so
  const album=albumById(song.albumId);
  return <button className={`work-row ${song.featured?'':'text-work-row'}`} data-work-id={song.id} onClick={e=>{if(song.featured)enter(song.id);else{e.currentTarget.focus({preventScroll:true});show(song)}}}><span className="mono work-index">{featuredNumber(song.id)?String(featuredNumber(song.id)).padStart(2,'0'):'—'}</span>{song.featured&&song.art?<img src={song.art} alt="" loading="lazy" decoding="async"/>:null}<span className="work-name"><strong>{song.title}</strong><small>{[album?.title,song.language,song.release].filter(Boolean).join(' · ')||'作品资料整理中'}</small></span><span className="work-kind">{song.featured?'精选作品':'其他作品'}</span><span className="index-arrow"><Icon/></span></button>;
 }
-export function CataloguePages({enter,player}: {player:Player;enter:Navigation['enter']}){
- const [query,setQuery]=useState(''),[filter,setFilter]=useState('all'),[shown,setShown]=useState<Song|null>(null);
+export function CataloguePages({enter,player,initialFilter='all'}: {player:Player;enter:Navigation['enter'];initialFilter?:string}){
+ const [query,setQuery]=useState(''),[filter,setFilter]=useState(initialFilter),[shown,setShown]=useState<Song|null>(null);
  const filtered=[...featuredSongs,...otherSongs].filter(s=>(filter==='all'||(filter==='featured'?s.featured:!s.featured))&&s.title.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
  return <section className="catalogue-page">
  <p className="eyebrow">全部作品 <span className="little-line"/> ALL WORKS</p><h1>声音的完整轨迹。</h1><p className="catalogue-description">从精选作品开始，持续收录新的创作。</p>
