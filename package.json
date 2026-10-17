@@ -12,7 +12,8 @@
     "build:production": "npm run build && node scripts/prepare-cloudflare.mjs",
     "deploy:production": "wrangler deploy",
     "preview:production": "wrangler dev --ip 127.0.0.1 --port 4180",
-    "deploy:field-preview": "wrangler deploy --config wrangler.field-preview.jsonc"
+    "deploy:field-preview": "wrangler deploy --config wrangler.field-preview.jsonc",
+    "deploy:mobius-preview": "wrangler deploy --config wrangler.mobius-preview.jsonc"
   },
   "dependencies": {
     "react": "^19.1.0",

@@ -1,0 +1,8 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import test from 'node:test';import ts from 'typescript';
+const js=ts.transpileModule(fs.readFileSync('src/mobius-model.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
+const {mobiusPoint,grains,galaxyLayout,project,TAU}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
+test('2π reverses width, 4π returns to same particle path',()=>{for(let i=0;i<100;i++){const u=i/9,v=i%2?1.2:-.8;assert(distance(mobiusPoint(u+TAU,v),mobiusPoint(u,-v))<1e-12);assert(distance(mobiusPoint(u+2*TAU,v),mobiusPoint(u,v))<1e-12)}});
+test('position and tangent continuous across 2π and 4π, no seam teleport',()=>{const e=1e-5;for(const u of [TAU,TAU*2])for(const v of [-1.4,-.4,.4,1.4]){const a=mobiusPoint(u-e,v),b=mobiusPoint(u,v),c=mobiusPoint(u+e,v);assert(distance(a,c)<.0001);assert(distance(b.map((x,i)=>(x-a[i])/e),c.map((x,i)=>(x-b[i])/e))<.001)}});
+test('seeded distribution reproducible and central hole remains open',()=>{const a=grains(2000),b=grains(2000);assert.deepEqual(a,b);for(const g of a){const p=mobiusPoint(g.u,g.v);assert(Math.hypot(p[0],p[1])>1.7);assert(Math.abs(g.v)<=1.4)}assert(new Set(a.map(g=>g.size)).size>1000)});
+test('camera framing preserves all sampled band edges at desktop and narrow widths',()=>{for(const [w,h] of [[1440,900],[390,844],[360,740]]){const l=galaxyLayout(w,h);for(let u=0;u<TAU;u+=.03)for(const v of [-1.4,0,1.4]){const p=project(mobiusPoint(u,v),l);assert(p[0]>-2&&p[0]<w+2);assert(p[1]>h*.15&&p[1]<h*.93)}}});

@@ -1,0 +1,12 @@
+/* Separate preview edition. The confluence renderer and its branch remain recoverable. */
+.mobius-journey{--handoff:90svh;--lift:-90svh}
+.mobius-journey .field-surface{pointer-events:none;opacity:clamp(0,calc((.92 - var(--passage))*8),1)}
+.mobius-static{display:none!important}.mobius-surface[data-fallback=true]>canvas:first-child{display:none}
+.mobius-surface[data-fallback=true] .mobius-static{display:block!important;position:absolute;inset:0;opacity:clamp(0,calc(1 - var(--passage)*1.4),1);transform:translateY(calc(var(--passage)*-12svh))}
+.mobius-journey .confluence-copy{top:21%;left:5%;right:auto}
+.mobius-journey .confluence-copy h1{font-size:clamp(34px,3.55vw,57px);line-height:1.35;white-space:normal}
+.mobius-journey .confluence-copy h1 em{display:block;font-size:.51em;letter-spacing:.13em;margin-top:18px;line-height:1.6}
+.mobius-journey .confluence-entry{left:5%;bottom:max(28px,5svh)}
+.mobius-journey .confluence-entry button{border-bottom:0;min-width:135px;gap:25px}
+.mobius-journey.is-reduced{--handoff:32svh;--lift:-32svh}
+@media(max-width:700px){.mobius-journey .confluence-copy{top:16%;left:7%;right:7%}.mobius-journey .confluence-copy h1{font-size:clamp(32px,8.6vw,38px);line-height:1.24;letter-spacing:.02em}.mobius-journey .confluence-copy h1>span{display:block}.mobius-journey .confluence-copy h1 em{font-size:17px;margin-top:16px;letter-spacing:.12em}.mobius-journey .confluence-entry{left:7%;bottom:max(25px,4svh)}}

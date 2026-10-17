@@ -1,7 +1,7 @@
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import {GravityScene} from './GravityScene';
-import {Confluence,mapStart} from './Confluence';
+import {MobiusJourney as Confluence,mapStart} from './MobiusJourney';
 import {AboutIdentity} from './AboutIdentity';
 import {NavigationVeil} from './NavigationVeil';
 import {useMotionPreference} from './useMotionPreference';
@@ -17,6 +17,7 @@ import './gravity.css';
 import './ui-review.css';
 import './voyage.css';
 import './confluence.css';
+import './mobius.css';
 const Star=()=> <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 1v30M1 16h30M6 6l20 20M6 26L26 6" stroke="currentColor" strokeWidth=".7"/><circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth=".7"/></svg>;
 
 function route(){const h=location.hash.slice(1);if(h==='archive')return 'map';if(h==='albums'||h.startsWith('album/')){history.replaceState(null,'','#works');return 'works'}if(['map','works'].includes(h))return h;if(/^work\/[1-9]\d*$/.test(h)&&songById(Number(h.slice(5)))){if(songById(Number(h.slice(5)))!.featured)return h;history.replaceState(null,'','#works');return 'works'}return 'home'}
