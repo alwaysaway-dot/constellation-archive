@@ -13,6 +13,7 @@ node evidence/river-source-v2/record.cjs
 node evidence/river-source-v2/performance.cjs
 node evidence/river-source-v2/handoff-performance.cjs
 node evidence/river-source-v2/edges.cjs
+node evidence/river-source-v2/echo.cjs
 ```
 
 以上浏览器脚本应串行执行，避免性能采样受多个测试浏览器争抢GPU影响。Playwright、Chrome、WebKit路径为本机验收依赖，未加入网站依赖。
@@ -26,3 +27,5 @@ node evidence/river-source-v2/edges.cjs
 ```bash
 npm run deploy:river-source-preview
 ```
+
+手机渲染在闲置时限制为30Hz，滚动事件后的120ms内提高调度频率以跟随原生滚动，避免源头CSS位移与支流画布更新不同拍。录屏只是操作证据，性能采样另存。
