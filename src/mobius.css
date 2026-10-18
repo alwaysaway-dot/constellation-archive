@@ -10,3 +10,5 @@
 .mobius-journey .confluence-entry button{border-bottom:0;min-width:135px;gap:25px}
 .mobius-journey.is-reduced{--handoff:32svh;--lift:-32svh}
 @media(max-width:700px){.mobius-journey .confluence-copy{top:16%;left:7%;right:7%}.mobius-journey .confluence-copy h1{font-size:clamp(32px,8.6vw,38px);line-height:1.24;letter-spacing:.02em}.mobius-journey .confluence-copy h1>span{display:block}.mobius-journey .confluence-copy h1 em{font-size:17px;margin-top:16px;letter-spacing:.12em}.mobius-journey .confluence-entry{left:7%;bottom:max(25px,4svh)}}
+.mobius-journey .field-surface{pointer-events:auto;touch-action:pan-y pinch-zoom}
+.mobius-journey .field-surface[data-fallback=true],.mobius-journey.is-reduced .field-surface{pointer-events:none}

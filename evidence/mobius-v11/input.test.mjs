@@ -1,0 +1,10 @@
+import fs from 'node:fs';import ts from 'typescript';import test from 'node:test';import assert from 'node:assert/strict';
+const compile=p=>ts.transpileModule(fs.readFileSync(p,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext}}).outputText;
+const model='data:text/javascript;base64,'+Buffer.from(compile('src/mobius-model.ts')).toString('base64');
+const input=compile('src/mobius-input.ts').replace("'./mobius-model'",JSON.stringify(model));
+const {gestureIntent,hitProxy}=await import('data:text/javascript;base64,'+Buffer.from(input).toString('base64'));
+const {galaxyLayout,mobiusPoint,project,density,TAU,depthLight}=await import(model);
+test('touch intent requires clear horizontal displacement; vertical and jitter remain native',()=>{assert.equal(gestureIntent(10,6),'pending');assert.equal(gestureIntent(19,14),'vertical');assert.equal(gestureIntent(30,5),'horizontal');assert.equal(gestureIntent(-30,-5),'horizontal');assert.equal(gestureIntent(5,-30),'vertical')});
+test('coarse picking identifies material location without triggering distant space',()=>{for(const w of [1440,390,360]){const l=galaxyLayout(w,w>700?900:844),pick=hitProxy(l),p=project(mobiusPoint(2.8,0),l),hit=pick(p[0],p[1],25);assert(hit&&Math.abs(hit.u-2.8)<.12);assert.equal(pick(8,160,20),null)}});
+test('cluster density continuous over reversed-width seam',()=>{for(let u=0;u<6;u+=.1)for(const v of [-1.3,-.4,.4,1.3])assert(Math.abs(density(u,v)-density(u+TAU,-v))<1e-12)});
+test('static light remains finite and resolves distinct front/back brightness',()=>{const l=galaxyLayout(1440,900);assert(depthLight(2.8,0,3,l).alpha>depthLight(2.8,0,-3,l).alpha);for(let u=0;u<TAU;u+=.1)assert(Number.isFinite(depthLight(u,1.3,2,l).alpha))});

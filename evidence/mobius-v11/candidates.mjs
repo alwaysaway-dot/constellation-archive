@@ -1,0 +1,3 @@
+import fs from 'node:fs';import ts from 'typescript';const s=ts.transpileModule(fs.readFileSync('src/mobius-model.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext}}).outputText;const m=await import('data:text/javascript;base64,'+Buffer.from(s).toString('base64'));
+const poses=[[-.8,.7,1.1],[-.65,-.7,.15],[.65,.55,-.05],[.9,.25,.15]];
+const data=poses.map(pose=>{const l=m.galaxyLayout(1440,900,pose);return {pose,points:m.grains(16000).map(g=>{const p=m.project(m.mobiusPoint(g.u,g.v),l);return [...p,g.alpha,g.size]})}});fs.writeFileSync('outputs/mobius-v11/candidates.json',JSON.stringify(data));
