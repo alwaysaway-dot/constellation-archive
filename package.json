@@ -14,7 +14,8 @@
     "preview:production": "wrangler dev --ip 127.0.0.1 --port 4180",
     "deploy:field-preview": "wrangler deploy --config wrangler.field-preview.jsonc",
     "deploy:mobius-preview": "wrangler deploy --config wrangler.mobius-preview.jsonc",
-    "deploy:mobius-v11-preview": "wrangler deploy --config wrangler.mobius-v11-preview.jsonc"
+    "deploy:mobius-v11-preview": "wrangler deploy --config wrangler.mobius-v11-preview.jsonc",
+    "deploy:vertical-lane-preview": "wrangler deploy --config wrangler.vertical-lane-preview.jsonc"
   },
   "dependencies": {
     "react": "^19.1.0",

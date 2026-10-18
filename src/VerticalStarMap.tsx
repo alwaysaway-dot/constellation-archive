@@ -1,0 +1,40 @@
+import {useEffect,useLayoutEffect,useRef,useState} from 'react';
+import {featuredSongs} from './content';
+import {Icon} from './Icons';
+import {lockPageScroll} from './lockPageScroll';
+import {focusIndex,LANE_X_DESKTOP,LANE_X_MOBILE} from './vertical-lane-model';
+import type {LaneState} from './VerticalLaneRenderer';
+type Memory={x:number;y:number;focus?:number};
+type Props={mode:'home'|'map';reduced:boolean;paused:boolean;selected:number|null;last:number|null;playing:boolean;playingId:number;memory:Memory;enter:(id:number)=>void};
+export function VerticalStarMap(p:Props){
+ const root=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),still=useRef<HTMLCanvasElement>(null),dialog=useRef<HTMLDialogElement>(null),indexButton=useRef<HTMLButtonElement>(null);
+ const runtime=useRef<{wake:()=>void;dispose:()=>void}|null>(null),[fallback,setFallback]=useState(false),[current,setCurrent]=useState(p.memory.focus??0),[indexOpen,setIndexOpen]=useState(false);
+ const focus=useRef(current),hover=useRef(-1),gesture=useRef({x:0,y:0,scroll:0,moved:false}),state=useRef<LaneState>({reduced:p.reduced,paused:p.paused,focus:current,selected:-1,playing:-1});
+ state.current={reduced:p.reduced,paused:p.paused||indexOpen,focus:focus.current,selected:featuredSongs.findIndex(s=>s.id===p.selected),playing:p.playing?featuredSongs.findIndex(s=>s.id===p.playingId):-1};
+ useEffect(()=>{let alive=true;const fail=()=>{if(alive){setFallback(true);runtime.current?.dispose();runtime.current=null;root.current!.dataset.renderer='fallback'}};import('./VerticalLaneRenderer').then(({createVerticalLane})=>{if(!alive)return;try{runtime.current=createVerticalLane(root.current!,canvas.current!,()=>state.current,fail)}catch{fail()}}).catch(fail);return()=>{alive=false;runtime.current?.dispose();runtime.current=null}},[]);
+ useEffect(()=>{if(!fallback)return;let alive=true,observer:ResizeObserver|undefined;import('./VerticalLaneRenderer').then(({drawLaneStill})=>{if(!alive)return;const draw=()=>drawLaneStill(still.current!,root.current!);draw();observer=new ResizeObserver(draw);observer.observe(root.current!)});return()=>{alive=false;observer?.disconnect()}},[fallback]);
+ useEffect(()=>{runtime.current?.wake()},[p.reduced,p.paused,p.selected,p.playing,p.playingId,current,indexOpen]);
+ useLayoutEffect(()=>{
+  const el=root.current!,buttons=Array.from(el.querySelectorAll<HTMLButtonElement>('[data-signal]'));let raf=0,origin=0,height=0,ys:number[]=[];
+  const read=()=>document.body.style.position==='fixed'?-(parseFloat(document.body.style.top)||0):scrollY;
+  const measure=()=>{origin=el.getBoundingClientRect().top+read();height=el.querySelector<HTMLElement>('.gravity-viewport')!.clientHeight;ys=buttons.map(b=>b.offsetTop)};
+  const update=()=>{raf=0;if(state.current.paused)return;const scroll=read()-origin;let next=focusIndex(ys,scroll,height,focus.current);if(state.current.selected>=0)next=state.current.selected;else if(hover.current>=0&&ys[hover.current]-scroll>80&&ys[hover.current]-scroll<height-80)next=hover.current;
+   focus.current=next;p.memory.focus=next;state.current.focus=next;buttons.forEach((b,i)=>b.dataset.focused=String(i===next));el.dataset.focused=String(next+1);el.dataset.scrolled=String(scroll>100);setCurrent(c=>c===next?c:next);runtime.current?.wake()};
+  const request=()=>{if(!raf)raf=requestAnimationFrame(update)};const resize=()=>{measure();request()};measure();update();const observer=new ResizeObserver(resize);observer.observe(el);window.addEventListener('scroll',request,{passive:true});window.addEventListener('resize',resize);el.addEventListener('lane-focus',request);return()=>{cancelAnimationFrame(raf);observer.disconnect();window.removeEventListener('scroll',request);window.removeEventListener('resize',resize);el.removeEventListener('lane-focus',request)};
+ },[p.memory,p.paused,indexOpen]);
+ const highlight=(i:number)=>{hover.current=i;root.current?.dispatchEvent(new Event('lane-focus'))};
+ const locate=(i:number,keyboard=false)=>{const b=root.current?.querySelector<HTMLButtonElement>(`[data-order="${i}"]`);if(!b)return;const y=b.getBoundingClientRect().top+scrollY-innerHeight*.43;window.scrollTo({top:Math.max(0,y),behavior:p.reduced||keyboard?'instant':'smooth'});if(!keyboard)b.focus({preventScroll:true})};
+ useEffect(()=>{if(!indexOpen)return;const d=dialog.current!,unlock=lockPageScroll();d.showModal();const handle=(e:KeyboardEvent)=>{if(e.key==='Escape'){e.preventDefault();setIndexOpen(false)}};d.addEventListener('keydown',handle);return()=>{d.removeEventListener('keydown',handle);d.close();unlock();indexButton.current?.focus({preventScroll:true})}},[indexOpen]);
+ const selectIndex=(i:number)=>{setIndexOpen(false);requestAnimationFrame(()=>requestAnimationFrame(()=>locate(i)))};
+ return <div ref={root} className={`gravity-stage gravity-map vertical-lane ${fallback?'is-fallback':''} ${p.reduced?'is-still':''} ${p.selected?'is-selecting':''}`} data-renderer="loading" data-scene="map">
+  <div className="gravity-viewport"><canvas ref={canvas} className="gravity-canvas" aria-hidden="true"/>
+   <div className="lane-position"><span className="lane-scroll-hint">向下探索</span><button ref={indexButton} aria-label={`当前位置 ${String(current+1).padStart(2,'0')} / 10，打开作品索引`} aria-haspopup="dialog" aria-expanded={indexOpen} onClick={()=>setIndexOpen(true)}>{String(current+1).padStart(2,'0')} <span>/ 10</span><Icon kind="menu"/></button></div>
+  </div>
+  <div className="lane-content"><canvas ref={still} className="lane-static" aria-hidden="true"/><div className="lane-heading"><span>星图档案</span>{fallback&&<small>静态星图</small>}</div>
+   <div className="lane-labels">{featuredSongs.map((song,i)=><button key={song.id} data-order={i} data-signal={song.id} data-focused={current===i} className={`lane-node ${i%2?'on-right':'on-left'} ${p.selected===song.id?'selected':''} ${p.last===song.id?'remembered':''}`} style={{'--lane-x-desktop':`${LANE_X_DESKTOP[i]*100}%`,'--lane-x-mobile':`${LANE_X_MOBILE[i]*100}%`,'--order':i} as React.CSSProperties} aria-label={`${String(i+1).padStart(2,'0')} ${song.title}，精选作品`} onPointerLeave={()=>highlight(-1)} onFocus={e=>{highlight(i);if(e.currentTarget.matches(':focus-visible')){const r=e.currentTarget.getBoundingClientRect();if(r.top<100||r.bottom>innerHeight-95)locate(i,true)}}} onBlur={()=>highlight(-1)} onPointerDown={e=>{gesture.current={x:e.clientX,y:e.clientY,scroll:scrollY,moved:false}}} onPointerMove={e=>{if(e.pointerType==='mouse'&&(e.movementX||e.movementY))highlight(i);if(Math.hypot(e.clientX-gesture.current.x,e.clientY-gesture.current.y)>9)gesture.current.moved=true}} onPointerCancel={()=>{gesture.current.moved=true}} onClick={e=>{if(p.paused||p.selected)return;if(e.detail===0||(!gesture.current.moved&&Math.abs(scrollY-gesture.current.scroll)<9)){window.scrollTo({top:scrollY,behavior:'instant'});focus.current=i;p.memory.focus=i;state.current.focus=i;setCurrent(i);p.enter(song.id)}}}>
+    <span className="lane-core" aria-hidden="true"/><span className="lane-label"><small>{String(i+1).padStart(2,'0')}</small><strong>{song.title}</strong><span className="lane-genre">{song.description}</span><span className="lane-enter">进入作品 <Icon/></span></span>
+   </button>)}</div>
+  </div>
+  {indexOpen&&<dialog ref={dialog} className="lane-index" aria-label="十首精选作品索引" onCancel={e=>{e.preventDefault();setIndexOpen(false)}} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)setIndexOpen(false)}}}><div className="lane-index-head"><h2>定位作品</h2><button aria-label="关闭作品索引" onClick={()=>setIndexOpen(false)}><Icon kind="close"/></button></div><nav>{featuredSongs.map((s,i)=><button key={s.id} aria-current={i===current?'location':undefined} onClick={()=>selectIndex(i)}><small>{String(i+1).padStart(2,'0')}</small><span>{s.title}</span></button>)}</nav></dialog>}
+ </div>;
+}

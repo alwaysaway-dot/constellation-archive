@@ -1,0 +1,41 @@
+/* Isolated vertical exhibition. Home canvas, imagery, typography and motion are untouched. */
+.confluence-map .vertical-lane{--lane-start:clamp(220px,32svh,300px);--lane-step:300px;height:calc(var(--lane-start) + 9 * var(--lane-step) + max(300px,55svh));margin:0;max-height:none;position:relative}
+.confluence-map .vertical-lane .gravity-viewport,.confluence-map .vertical-lane.is-still .gravity-viewport,.confluence-map .vertical-lane.is-fallback .gravity-viewport{position:sticky;top:0;height:100svh;max-height:none;transform:translateY(var(--lift));overflow:visible;pointer-events:none}
+.vertical-lane .gravity-canvas{overflow:clip}
+.vertical-lane.is-fallback .gravity-canvas{display:none}
+.lane-content{position:absolute;inset:0;transform:translateY(var(--lift));pointer-events:none}
+.lane-static{display:none;width:100%;height:100%;position:absolute;inset:0;pointer-events:none}
+.is-fallback .lane-static{display:block}
+.lane-heading{position:absolute;top:124px;left:max(7%,calc((100% - 940px)/2));color:#9aa9b5;font:13px/1.7 var(--serif);letter-spacing:.12em;display:flex;gap:24px}
+.lane-heading small{font:10px/2 Arial,"PingFang SC",sans-serif;color:#80909c;letter-spacing:0}
+.lane-labels{position:absolute;inset:0}
+.lane-node{position:absolute;left:var(--lane-x-desktop);top:calc(var(--lane-start) + var(--order) * var(--lane-step));width:260px;min-height:128px;transform:translate(-22px,-22px);padding:0 0 0 52px;text-align:left;pointer-events:auto;background:none;border:0;touch-action:pan-y;outline-offset:7px;transition:opacity .2s;color:#cad3da}
+.lane-core{position:absolute;left:17px;top:17px;width:10px;height:10px;border-radius:50%;border:.5px solid #b8d1e02e;transform:scale(1.65);opacity:0;transition:opacity .2s,border-color .2s}
+.lane-node[data-focused=true] .lane-core,.lane-node:focus-visible .lane-core{opacity:.45;border-color:#b8d1e059}
+.lane-label{display:block;min-width:0}
+.lane-label small{font:11px/1.5 var(--mono);letter-spacing:.04em;color:#a5b5c0;display:block;margin-bottom:7px}
+.lane-label strong{font:400 21px/1.48 var(--serif),"Songti SC",serif;display:block;overflow-wrap:anywhere;color:#b7c4ce;transition:color .2s}
+.lane-node[data-focused=true] .lane-label strong,.lane-node.selected .lane-label strong,.lane-node:focus-visible .lane-label strong{color:#eef0ef}
+.lane-genre{display:block;margin-top:9px;font:11px/1.7 Arial,"PingFang SC",sans-serif;color:#a2b0bb;opacity:0;transition:opacity .22s;min-height:20px}
+.lane-enter{display:flex;align-items:center;gap:9px;font:11px/1.7 Arial,"PingFang SC",sans-serif;color:#c2ced6;margin-top:8px;opacity:0;transition:opacity .22s}.lane-enter .line-icon{width:17px;height:17px}
+.lane-node[data-focused=true] .lane-genre,.lane-node[data-focused=true] .lane-enter,.lane-node:focus-visible .lane-genre,.lane-node:focus-visible .lane-enter{opacity:1}
+.vertical-lane.is-selecting .lane-node:not(.selected){opacity:.3}.lane-node.selected .lane-core{opacity:1;border-color:#d7e4eb88}
+.lane-position{position:absolute;bottom:calc(max(22px,env(safe-area-inset-bottom)) + var(--mini-space,0px));right:7%;display:flex;align-items:center;gap:22px;z-index:4;color:#a0afba;pointer-events:none}
+.lane-position button{pointer-events:auto;min-width:92px;min-height:44px;display:flex;align-items:center;justify-content:center;gap:9px;font:12px var(--mono);color:#e0e5e8;border:1px solid #a4b6c329;border-radius:30px;background:#040709e8}
+.lane-position button>span{color:#94a5b2}.lane-position .line-icon{width:14px;height:14px;opacity:.7}.lane-scroll-hint{font:11px/1.7 Arial,"PingFang SC",sans-serif;color:#9babb7;transition:opacity .2s}.vertical-lane[data-scrolled=true] .lane-scroll-hint{opacity:0}
+.lane-index{margin:auto;width:min(520px,calc(100% - 32px));max-height:calc(100svh - 70px);overflow-y:auto;overscroll-behavior:contain;border:1px solid #7c93a040;border-radius:3px;background:#070c10;color:#d6dfe5;padding:25px 28px}.lane-index::backdrop{background:#010305e6}
+.lane-index-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.lane-index h2{font:22px var(--serif);margin:0}.lane-index-head button{width:44px;height:44px}.lane-index nav{display:flex;flex-direction:column;gap:4px}.lane-index nav button{display:flex;gap:22px;align-items:baseline;text-align:left;min-height:49px;padding:10px 0;color:#b3c1cb}.lane-index nav small{font:10px var(--mono);color:#8b9eac}.lane-index nav span{font:17px/1.55 var(--serif);overflow-wrap:anywhere}.lane-index nav button[aria-current]{color:#f0ede8}.lane-index button:focus-visible,.lane-position button:focus-visible,.lane-node:focus-visible{outline:1px solid #b2cfdfaa}
+@media(max-width:700px){
+ .confluence-map .vertical-lane{--lane-step:280px;margin:0;width:100%}
+ .lane-heading{top:118px;left:7%;font-size:12px;gap:18px}
+ .lane-node{left:var(--lane-x-mobile);width:232px;min-height:134px;padding-left:42px;transform:translate(-22px,-22px)}
+ .lane-label strong{font-size:18px;line-height:1.55}.lane-label small{font-size:10px;margin-bottom:6px}.lane-genre{font-size:10px;line-height:1.65;max-width:185px}.lane-enter{font-size:10px}
+ .lane-node.on-right{transform:translate(calc(-100% + 22px),-22px);padding-left:0;padding-right:42px;text-align:right}.lane-node.on-right .lane-core{left:auto;right:17px}.lane-node.on-right .lane-enter{justify-content:flex-end}
+ .lane-position{right:6%;bottom:calc(max(18px,env(safe-area-inset-bottom)) + var(--mini-space,0px));gap:16px}.lane-position button{font-size:11px;min-width:86px}.lane-scroll-hint{font-size:10px}
+ .lane-index{padding:18px 22px}.lane-index nav span{font-size:16px}
+}
+@media(max-width:375px){.lane-node{width:215px;padding-left:40px}.lane-node.on-right{padding-right:40px}.lane-label strong{font-size:17px}}
+html[data-motion=reduced] .lane-node,html[data-motion=reduced] .lane-label strong,html[data-motion=reduced] .lane-genre,html[data-motion=reduced] .lane-enter{transition:none}
+/* Only the map state needs an opaque navigation shelf as content scrolls beneath it. */
+.app:has(main[data-page=map] .vertical-lane)>.header:before{content:"";position:absolute;z-index:-1;inset:0 -10vw -18px;background:linear-gradient(#030506 0%,#030506 78%,#03050600 100%);pointer-events:none}
+.lane-label strong{word-break:keep-all;overflow-wrap:break-word;text-wrap:balance}
