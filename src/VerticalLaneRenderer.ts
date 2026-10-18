@@ -11,14 +11,14 @@ export function createVerticalLane(host:HTMLElement,canvas:HTMLCanvasElement,sta
  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:false,powerPreference:'low-power'});renderer.setClearColor(0x030506,0);
  const gl=renderer.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info'),gpu=ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'unknown';
  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(42,1,.1,80);camera.position.z=20;camera.updateMatrixWorld();
- const uniforms={uScroll:{value:0},uTime:{value:0},uFlow:{value:0},uPixel:{value:1},uSize:{value:new THREE.Vector2()},uRatio:{value:1},uEnergy:{value:0},uSelected:{value:-1},uSelect:{value:0},uMotion:{value:1},uPointer:{value:new THREE.Vector2()},uPulseY:{value:0},uPulseAt:{value:-20},uBirth:{value:1},uReach:{value:1},uBridge:{value:Array.from({length:4},()=>new THREE.Vector2())},uAnchors:{value:Array.from({length:10},()=>new THREE.Vector2())},uFocus:{value:Array(10).fill(0)},uColors:{value:MOTIF_COLORS.map(c=>new THREE.Color(c))}};
+ const uniforms={uScroll:{value:0},uTime:{value:0},uFlow:{value:0},uPixel:{value:1},uSize:{value:new THREE.Vector2()},uRatio:{value:1},uEnergy:{value:0},uSelected:{value:-1},uSelect:{value:0},uMotion:{value:1},uPointer:{value:new THREE.Vector2()},uPulseY:{value:0},uPulseAt:{value:-20},uBirth:{value:1},uReach:{value:1},uBridge:{value:Array.from({length:4},()=>new THREE.Vector2())},uAnchors:{value:Array.from({length:10},()=>new THREE.Vector2())},uFocus:{value:Array(10).fill(0)},uEcho:{value:Array(10).fill(0)},uColors:{value:MOTIF_COLORS.map(c=>new THREE.Color(c))}};
  const vertex=`attribute float aSize,aAlpha,aKind,aPhase,aAnchor,aPart;
  uniform float uScroll,uTime,uFlow,uPixel,uRatio,uEnergy,uSelected,uSelect,uMotion,uBirth,uReach,uPulseY,uPulseAt;
- uniform float uFocus[10];uniform vec3 uColors[10];uniform vec2 uSize,uPointer,uAnchors[10],uBridge[4];
+ uniform float uFocus[10],uEcho[10];uniform vec3 uColors[10];uniform vec2 uSize,uPointer,uAnchors[10],uBridge[4];
  varying float vAlpha,vKind;varying vec3 vColor;
  vec2 curve(float t){float a=1.-t;return a*a*a*uBridge[0]+3.*a*a*t*uBridge[1]+3.*a*t*t*uBridge[2]+t*t*t*uBridge[3];}
  void main(){vec3 p=position;float core=1.-step(.1,abs(aKind-3.));float layer=clamp((p.z+10.)/15.,0.,1.);float focus=0.,selected=0.;vColor=vec3(.63,.72,.84);
- if(aAnchor>=0.){focus=uFocus[int(aAnchor)];selected=1.-smoothstep(.1,.8,abs(aAnchor-uSelected));vColor=mix(vec3(.65,.73,.83),uColors[int(aAnchor)],.42+focus*.30);}
+ if(aAnchor>=0.){focus=uFocus[int(aAnchor)];if((abs(aAnchor-4.)<.1&&aPart>.5)||abs(aAnchor-7.)<.1)focus=uEcho[int(aAnchor)];selected=1.-smoothstep(.1,.8,abs(aAnchor-uSelected));vColor=mix(vec3(.65,.73,.83),uColors[int(aAnchor)],.42+focus*.30);}
  float response=0.,birth=uBirth;
  if(aKind>5.5){float t=p.x;vec2 d=normalize(curve(min(.999,t+.003))-curve(max(.001,t-.003)));vec2 normal=vec2(-d.y,d.x);float width=sin(t*3.14159)*.7+.65;
  p.xy=curve(t)+normal*(p.y*width+aPart*6.+sin(t*13.-uFlow*.25)*2.*uMotion);p.y+=uScroll;
@@ -77,7 +77,11 @@ export function createVerticalLane(host:HTMLElement,canvas:HTMLCanvasElement,sta
   const decay=Math.exp(-Math.max(0,now-scrollTime)/190);uniforms.uEnergy.value+=((s.reduced?0:Math.min(1,Math.abs(velocity))*decay)-uniforms.uEnergy.value)*(1-Math.exp(-dt*9));
   if(!s.reduced)flow+=dt*(1+uniforms.uEnergy.value*1.6);uniforms.uFlow.value=s.reduced?0:flow;uniforms.uScroll.value=scroll;uniforms.uTime.value=s.reduced?0:elapsed;uniforms.uMotion.value=s.reduced?0:1;
   if(s.focus!==previousFocus){previousFocus=s.focus;uniforms.uPulseAt.value=elapsed;uniforms.uPulseY.value=uniforms.uAnchors.value[s.focus].y}
-  for(let i=0;i<10;i++)uniforms.uFocus.value[i]+=(Number(s.focus===i)-uniforms.uFocus.value[i])*(s.reduced?1:1-Math.exp(-dt*7));
+  for(let i=0;i<10;i++){
+   const target=Number(s.focus===i);
+   uniforms.uFocus.value[i]+=(target-uniforms.uFocus.value[i])*(s.reduced?1:1-Math.exp(-dt*(i===9?14:7)));
+   uniforms.uEcho.value[i]+=(target-uniforms.uEcho.value[i])*(s.reduced?1:1-Math.exp(-dt*2.8));
+  }
   uniforms.uSelected.value=s.selected;uniforms.uSelect.value+=(Number(s.selected>=0)-uniforms.uSelect.value)*(s.reduced?1:1-Math.exp(-dt*16));uniforms.uPointer.value.lerp(s.reduced?pointer.set(0,0):pointer,1-Math.exp(-dt*8));
   const t=performance.now();renderer.render(scene,camera);submission=performance.now()-t;frames++;samples.push(submission);if(samples.length>240)samples.shift();if(!s.reduced)frame=requestAnimationFrame(draw);
  }
@@ -89,7 +93,7 @@ export function createVerticalLane(host:HTMLElement,canvas:HTMLCanvasElement,sta
  function lost(e:Event){e.preventDefault();fail()}
  const observer=new ResizeObserver(resize);observer.observe(viewport);const intersection=new IntersectionObserver(e=>{visible=e[0].isIntersecting;wake()});intersection.observe(viewport);
  window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',resize);host.addEventListener('pointermove',move,{passive:true});host.addEventListener('pointerleave',leave);document.addEventListener('visibilitychange',wake);canvas.addEventListener('webglcontextlost',lost);measure();wake();
- (host as HTMLElement&{gravitySnapshot?:()=>unknown}).gravitySnapshot=()=>({renderer:'WebGLRenderer',cameraType:camera.type,gpu,frames,elapsed,disposed,visible,paused:state().paused,reduced:state().reduced,focused:state().focus+1,selected:state().selected,progress:journey(host).progress,bridge:uniforms.uBridge.value.map(v=>v.toArray()),reach:uniforms.uReach.value,birth:uniforms.uBirth.value,scroll,energy:uniforms.uEnergy.value,drawCalls:renderer.info.render.calls,particles:geometry.getAttribute('position').count,depths:LANE_DEPTH,geometryBuilds:builds,pixelRatio:renderer.getPixelRatio(),renderSubmissionMs:submission,submissionSamples:samples.slice()});
+ (host as HTMLElement&{gravitySnapshot?:()=>unknown}).gravitySnapshot=()=>({renderer:'WebGLRenderer',cameraType:camera.type,gpu,frames,elapsed,disposed,visible,paused:state().paused,reduced:state().reduced,focused:state().focus+1,focusLevels:[...uniforms.uFocus.value],echoLevels:[...uniforms.uEcho.value],selected:state().selected,progress:journey(host).progress,bridge:uniforms.uBridge.value.map(v=>v.toArray()),reach:uniforms.uReach.value,birth:uniforms.uBirth.value,scroll,energy:uniforms.uEnergy.value,drawCalls:renderer.info.render.calls,particles:geometry.getAttribute('position').count,depths:LANE_DEPTH,geometryBuilds:builds,pixelRatio:renderer.getPixelRatio(),renderSubmissionMs:submission,submissionSamples:samples.slice()});
  return{wake,dispose(){if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer.disconnect();intersection.disconnect();window.removeEventListener('scroll',onScroll);window.removeEventListener('resize',resize);host.removeEventListener('pointermove',move);host.removeEventListener('pointerleave',leave);document.removeEventListener('visibilitychange',wake);canvas.removeEventListener('webglcontextlost',lost);geometry.dispose();lineGeometry.dispose();material.dispose();lineMaterial.dispose();renderer.dispose();renderer.forceContextLoss();host.dataset.disposed='true'}};
 }
 function dot(ctx:CanvasRenderingContext2D,x:number,y:number,r:number,color:string,alpha:number){ctx.globalAlpha=clamp(alpha);ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
