@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {RISE} from './river-handoff';
 import {newInput,hitProxy,bindMobiusInput,type MaterialHit} from './mobius-input';
 import {galaxyLayout,grains,mobiusPoint,project,depthLight,seeded,TAU,type GalaxyLayout} from './mobius-model';
 export type MobiusState={progress:number;reduced:boolean;paused:boolean;velocity:number;velocityAt:number};
@@ -24,7 +25,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  vec3 location(float u,float v){
   vec3 m=materialPoint(u,v),p=m+position;float local=localInfluence(m)*(1.-smoothstep(.12,.35,uProgress));
   p+=surfaceNormal(u,v)*local*.07;
-  float spread=smoothstep(.16,.90,uProgress);p.x*=1.+spread*1.6;p.y*=1.+spread*.7;p.z+=spread*sin(u*2.)*1.1;p+=position*spread*6.;
+  // The original band remains intact; the journey moves the viewport, not its topology.
   return pose(uMatrix*p)*uScale+uOffset;
  }
  void tone(float u,float v,vec3 p){
@@ -36,7 +37,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
   float signal=exp(-pow(abs(sin((u-age*.8-2.4)*.5))*6.,2.))*(ambient+uEnergy*.5);
   float local=localInfluence(materialPoint(u,v));
   float fold=pow(1.-abs(n.z),4.)*.28;
-  vAlpha=2.2*aStyle.y*(lit*facing+fold)*(.50+.50*near)*(1.+signal+local*.85)*(1.-smoothstep(.53,.90,uProgress));
+  vAlpha=2.2*aStyle.y*(lit*facing+fold)*(.50+.50*near)*(1.+signal+local*.85)*(1.+smoothstep(.02,.22,uProgress)*exp(-pow(abs(sin((u-3.2)*.5))*9.,2.))*.48);
   vAlpha*=1.+sin(uTime*.6+aParam.w)*.035*(1.-uReduced);
   vColor=mix(vec3(.40,.50,.62),vec3(.84,.89,.94),near);vStar=aStyle.z;
  }`;
@@ -65,8 +66,8 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  const begin=performance.now();renderer.render(scene,camera);drawMs=performance.now()-begin;costs[costIndex++%240]=drawMs;frames++;host.dataset.renderer='webgl';if(!st.reduced)raf=requestAnimationFrame(paint);
  }
  function wake(){if(disposed)return;if(document.hidden||!visible||state().paused){input.hover=0;input.tiltTarget=0;input.eventAt=-10000;hover=0;tilt=0;cancelAnimationFrame(raf);raf=0;last=0;return}if(!raf)raf=requestAnimationFrame(paint)}
- function resize(){const r=host.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height);if(w===previousWidth&&h===previousHeight)return;const wasMobile=mobile;mobile=w<701;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.2:1.5));renderer.setSize(w,h,false);uniforms.uRatio.value=renderer.getPixelRatio();const l=galaxyLayout(w,h);layout=l;bounds={left:r.left,top:r.top};proxy=hitProxy(l);uniforms.uMatrix.value.fromArray(l.matrix);uniforms.uScale.value=l.scale;uniforms.uOffset.value.fromArray(l.offset);if(!builds||wasMobile!==mobile)build();previousWidth=w;previousHeight=h;wake()}
- const pick=(x:number,y:number):MaterialHit|null=>proxy?.(x-bounds.left,y-bounds.top,mobile?25:38)||null;
+ function resize(){const r=host.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height);if(w===previousWidth&&h===previousHeight)return;const wasMobile=mobile;mobile=w<701;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.2:1.5));renderer.setSize(w,h,false);uniforms.uRatio.value=renderer.getPixelRatio();const l=galaxyLayout(w,h);layout=l;bounds={left:r.left,top:r.top+state().progress*h*RISE};proxy=hitProxy(l);uniforms.uMatrix.value.fromArray(l.matrix);uniforms.uScale.value=l.scale;uniforms.uOffset.value.fromArray(l.offset);if(!builds||wasMobile!==mobile)build();previousWidth=w;previousHeight=h;wake()}
+ const pick=(x:number,y:number):MaterialHit|null=>proxy?.(x-bounds.left,y-bounds.top+state().progress*previousHeight*RISE,mobile?25:38)||null;
  const unbind=bindMobiusInput(host,input,pick,()=>!disposed&&!document.hidden&&visible&&!state().paused&&!state().reduced&&state().progress<.28,wake);
  function loss(e:Event){e.preventDefault();onFallback()}
  const observer=new IntersectionObserver(es=>{visible=es[0].isIntersecting;wake()});observer.observe(host);const size=new ResizeObserver(resize);size.observe(host);document.addEventListener('visibilitychange',wake);canvas.addEventListener('webglcontextlost',loss);

@@ -1,0 +1,33 @@
+/* River Source V2: one native scroll progress joins the intact source band and archive. */
+.river-journey .field-surface{opacity:1;transform:translateY(calc(var(--passage) * var(--source-rise,-105svh)))}
+.river-journey .mobius-surface[data-fallback=true] .mobius-static{opacity:1;transform:none}
+.river-journey .confluence-map{opacity:1}
+.river-journey .lane-content{transform:none}
+.river-journey .lane-labels,.river-journey .lane-heading{opacity:clamp(0,calc((var(--passage) - .52) / .24),1)}
+.river-journey .lane-position{opacity:clamp(0,calc((var(--passage) - .90) * 10),1)}
+.river-journey .lane-static{opacity:clamp(0,calc((var(--passage) - .46) / .20),1)}
+.river-journey .vertical-lane{--lane-step:420px;height:calc(var(--lane-start) + 9 * var(--lane-step) + max(370px,62svh))}
+.river-journey .lane-node{width:260px;min-height:250px;padding:145px 8px 0;transform:translate(-50%,-65px);text-align:center;display:flex;align-items:flex-start;justify-content:center}
+.river-journey .lane-core{left:calc(50% - 5px);top:60px;right:auto}
+.river-journey .lane-label{width:100%}
+.river-journey .lane-label strong{font-size:20px;color:#c4cdd5}
+.river-journey .lane-label small{font-size:11px;margin-bottom:6px}
+.river-journey .lane-enter{justify-content:center}
+.river-journey .lane-genre{max-width:none;margin-top:7px;min-height:0}
+.river-journey .lane-bridge-static{display:none;position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.river-journey .is-fallback .lane-bridge-static{display:block}
+@media(max-width:700px){
+ .river-journey .vertical-lane{--lane-step:390px}
+ .river-journey .lane-node,.river-journey .lane-node.on-right{width:240px;min-height:245px;padding:145px 8px 0;transform:translate(-50%,-65px);text-align:center}
+ .river-journey .lane-node.on-right .lane-core{left:calc(50% - 5px);right:auto}
+ .river-journey .lane-node.on-right .lane-enter{justify-content:center}
+ .river-journey .lane-label strong{font-size:18px}
+}
+@media(max-width:375px){.river-journey .lane-node,.river-journey .lane-node.on-right{width:224px}.river-journey .lane-label strong{font-size:17px}}
+
+.river-journey .confluence-copy{opacity:clamp(0,calc(1 - var(--passage)*4),1)}
+.app:has(.river-journey)>.header:before{content:"";position:absolute;z-index:-1;inset:0 -10vw -18px;background:linear-gradient(#030506 0%,#030506 78%,#03050600 100%);pointer-events:none}
+.river-journey .lane-position{top:105px;bottom:auto;right:7%;gap:14px}
+@media(max-width:700px){.river-journey .lane-position{top:107px;right:6%}.river-journey .lane-scroll-hint{display:none}}
+
+.river-journey .confluence-entry{opacity:clamp(0,calc((.48 - var(--passage))*6),1)}
