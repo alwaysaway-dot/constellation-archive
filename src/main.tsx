@@ -21,6 +21,7 @@ import './mobius.css';
 import './vertical-lane.css';
 import './river-source.css';
 import './six-stage.css';
+import './ring-entry.css';
 const Star=()=> <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 1v30M1 16h30M6 6l20 20M6 26L26 6" stroke="currentColor" strokeWidth=".7"/><circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth=".7"/></svg>;
 
 function route(){const h=location.hash.slice(1);if(h==='archive')return 'map';if(h==='albums'||h.startsWith('album/')){history.replaceState(null,'','#works');return 'works'}if(['map','works','about'].includes(h))return h;if(/^work\/[1-9]\d*$/.test(h)&&songById(Number(h.slice(5)))){if(songById(Number(h.slice(5)))!.featured)return h;history.replaceState(null,'','#works');return 'works'}return 'home'}

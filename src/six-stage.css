@@ -1,13 +1,4 @@
-/* Six-stage passage and editorial support pages. No player or song typography overrides. */
-.six-stage-journey{--handoff:235svh;--lift:-235svh}
-.six-stage-journey.is-reduced{--handoff:65svh;--lift:-65svh}
-.six-stage-journey .confluence-copy{top:22%;left:7%;opacity:clamp(0,calc(1 - var(--passage)*5),1);transform:translateY(calc(var(--passage)*-22svh))}
-.six-stage-journey .confluence-copy h1{font:400 clamp(36px,4vw,62px)/1.4 var(--serif),"Songti SC",serif;letter-spacing:.045em}
-.six-stage-journey .confluence-copy h1 small{display:block;font:14px/1.6 var(--serif);letter-spacing:.09em;color:#abb3bb;margin-top:12px}
-.six-stage-journey .lane-labels,.six-stage-journey .lane-heading{opacity:clamp(0,calc((var(--passage) - .94) / .06),1)}
-.six-stage-journey .lane-position{opacity:clamp(0,calc((var(--passage) - .97) / .03),1)}
-.six-stage-journey .lane-static{opacity:clamp(0,calc((var(--passage) - .94) / .06),1)}
-.six-stage-journey .field-fallback-note{bottom:max(16px,env(safe-area-inset-bottom));font-size:10px}
+/* Editorial support pages. No player or song typography overrides. */
 /* Quiet outlines remain visible to keyboard users, never as permanent button chrome. */
 .overlay-close,.navigation-veil .overlay-close,.preview-panel .overlay-close{width:44px;height:44px;min-width:44px;min-height:44px;padding:10px;display:grid;place-items:center;border:0;border-radius:0;background:transparent;box-shadow:none;color:#b7bdc3;font:inherit;transition:color .15s,background .15s}
 .overlay-close svg{width:22px;height:22px}
@@ -63,7 +54,6 @@
 .qr-dialog{position:fixed;margin:auto;width:min(480px,calc(100% - 36px));max-height:calc(100dvh - 36px);overflow:auto;padding:28px;border:1px solid #7f919c30;background:#080c10;color:#d6dde2;overscroll-behavior:contain}
 .qr-dialog::backdrop{background:#020406ed}.qr-dialog .overlay-close{margin-left:auto}.qr-dialog h2{font:400 25px var(--serif);margin:0 0 22px}.qr-dialog img{display:block;width:100%;height:auto;background:#fff;border:0;border-radius:0}.qr-dialog .quiet-action{margin-top:18px}.qr-dialog>p{font-size:12px;line-height:1.9;color:#9aaab7;margin-bottom:0}
 @media(max-width:700px){
- .six-stage-journey .confluence-copy{left:7%;right:7%;top:17%}.six-stage-journey .confluence-copy h1{font-size:34px;letter-spacing:.065em}.six-stage-journey .confluence-copy h1 small{font-size:13px;letter-spacing:.05em}
  .navigation-veil .veil-content{padding:27px 7%}.navigation-veil .veil-close{right:5%;top:24px}.navigation-veil .veil-brand{font-size:25px}.navigation-veil .veil-content nav{margin:72px 0 28px;gap:20px}.navigation-veil .veil-content nav button{font-size:26px;gap:24px;min-height:64px}.navigation-veil .veil-content nav button>span{gap:18px}.navigation-veil .veil-content nav button em{font-size:11px}.navigation-veil .veil-content nav button[aria-current]:after{left:48px}
  .catalogue-page{padding:25px 7% 15px}.works-heading{margin-bottom:23px}.catalogue-page .works-heading h1{font-size:31px}.works-heading h1 small{font-size:12px}.works-heading>p{font-size:10px}
  .catalogue-tools{gap:13px}.search-label{max-width:none}.filter-group{justify-content:flex-start;gap:12px}.filter-group button{padding:10px 12px}.filter-group button:first-child{padding-left:0}.filter-group button[aria-pressed=true]:after{left:12px}.filter-group button:first-child[aria-pressed=true]:after{left:0}
@@ -72,10 +62,9 @@
  .identity-portrait{width:72%;max-width:280px;margin:28px 0 30px;align-self:flex-start}.identity-bio p{font-size:14px;line-height:2.05;margin-bottom:22px}.identity-contact{width:100%;padding-top:26px;margin-top:20px}.identity-contact h2{font-size:23px;margin-bottom:15px}
  .contact-row{grid-template-columns:minmax(0,1fr) auto;gap:4px 15px;padding:16px 0}.contact-label{grid-column:1/-1;font-size:11px}.contact-value{font:14px/1.8 Arial,sans-serif}.contact-row .quiet-action{font-size:11px}.contact-qr{grid-column:1/-1}.qr-dialog{padding:18px}.qr-dialog h2{font-size:23px}.footer{padding:25px 7%;display:flex;flex-wrap:wrap;gap:8px 18px}.footer>span:first-child{font-size:18px}.footer>.subtle{font-size:10px}.footer-about{margin-left:auto}
 }
-@media(prefers-reduced-motion:reduce){.navigation-veil{animation:none}.six-stage-journey .confluence-copy{transform:none}}
 
-.six-stage-journey:not(.is-reduced) .field-surface{opacity:clamp(0,calc((.45 - var(--passage))*30),1)}
 
 @media(max-width:700px){.identity-heading{align-self:stretch}}
 
 .navigation-veil .veil-content nav button[aria-current] small:after{content:none}
+@media(prefers-reduced-motion:reduce){.navigation-veil{animation:none}}

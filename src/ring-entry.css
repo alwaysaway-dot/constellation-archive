@@ -1,0 +1,14 @@
+/* One short, reversible approach. Support-page styles are intentionally untouched. */
+.ring-entry{--handoff:145svh;--lift:-145svh}
+.ring-entry.is-reduced{--handoff:45svh;--lift:-45svh}
+.ring-entry .field-surface{opacity:1}
+.ring-entry .confluence-copy{top:22%;left:7%;opacity:clamp(0,calc(1 - var(--passage)*4),1);transform:translateY(calc(var(--passage)*-14svh))}
+.ring-entry .confluence-copy h1{font:400 clamp(36px,4vw,62px)/1.4 var(--serif),"Songti SC",serif;letter-spacing:.045em}
+.ring-entry .confluence-copy h1 small{display:block;font:14px/1.6 var(--serif);letter-spacing:.09em;color:#abb3bb;margin-top:12px}
+.ring-entry .lane-labels,.ring-entry .lane-heading{opacity:clamp(0,calc((var(--passage) - .92) / .08),1)}
+.ring-entry .lane-position{opacity:clamp(0,calc((var(--passage) - .97) / .03),1)}
+.ring-entry .lane-static{opacity:0}
+.ring-entry[data-progress="1.0000"] .lane-static{opacity:1}
+.ring-entry .field-fallback-note{bottom:max(16px,env(safe-area-inset-bottom));font-size:10px}
+@media(max-width:700px){.ring-entry .confluence-copy{left:7%;right:7%;top:17%}.ring-entry .confluence-copy h1{font-size:34px;letter-spacing:.065em}.ring-entry .confluence-copy h1 small{font-size:13px;letter-spacing:.05em}}
+@media(prefers-reduced-motion:reduce){.ring-entry .confluence-copy{transform:none}}

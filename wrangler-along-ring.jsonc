@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "alwaysaway-ring-entry-preview",
+  "account_id": "d00b6e65cd350d52b0125ea59ad03592",
+  "compatibility_date": "2026-10-15",
+  "main": "deploy/audio-worker.mjs",
+  "workers_dev": true,
+  "preview_urls": false,
+  "build": { "command": "npm run build:production" },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/audio/*"],
+    "html_handling": "auto-trailing-slash",
+    // Current routes are /#map, /#work/ID and /#works: the server receives /.
+    // No SPA fallback is needed; missing media/scripts must remain real 404s.
+    "not_found_handling": "none"
+  }
+}
