@@ -1,5 +1,5 @@
 /** Deterministic material coordinates, shared by WebGL and the static fallback. */
-export type LanePoint={x:number;y:number;z:number;size:number;alpha:number;kind:number;phase:number;anchor:number;part:number};
+export type LanePoint={x:number;y:number;z:number;size:number;alpha:number;kind:number;phase:number;anchor:number;part:number;route?:[number,number]};
 export const LANE_X_DESKTOP=[.40,.59,.43,.60,.39,.58,.42,.60,.40,.57];
 export const LANE_X_MOBILE=[.35,.65,.37,.64,.35,.63,.37,.65,.35,.63];
 export const LANE_DEPTH=[.5,-.8,.8,-.4,.3,-.7,.7,-.5,.4,-.6];
@@ -44,6 +44,7 @@ export function createLanePoints(width:number,height:number){
    // A graded handful of resolved stars gives the contour a readable hierarchy.
    const bright=i%37===0;
    add(x+dx*scale,y+dy*scale,LANE_DEPTH[n]+z,bright?3.4+random()*1.8:1.05+random()*1.7,bright?.92:alpha,4,n,part,a);
+   points[points.length-1].route=[t,i];
   }
   // A few resolved stars, with much smaller halo than the surrounding constellation.
   for(let i=0;i<12;i++)add(x+gaussian()*58*scale,y+gaussian()*48*scale,1+random()*3,2+random()*2,.50+random()*.35,2,n);

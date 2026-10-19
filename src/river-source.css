@@ -1,9 +1,9 @@
 /* River Source V2: one native scroll progress joins the intact source band and archive. */
-.river-journey .field-surface{opacity:1;transform:translateY(calc(var(--passage) * var(--source-rise,-105svh)))}
+.river-journey .field-surface{opacity:1;transform:none}
 .river-journey .mobius-surface[data-fallback=true] .mobius-static{opacity:1;transform:none}
 .river-journey .confluence-map{opacity:1}
 .river-journey .lane-content{transform:none}
-.river-journey .lane-labels,.river-journey .lane-heading{opacity:clamp(0,calc((var(--passage) - .52) / .24),1)}
+.river-journey .lane-labels,.river-journey .lane-heading{opacity:clamp(0,calc((var(--passage) - .55) / .22),1)}
 .river-journey .lane-position{opacity:clamp(0,calc((var(--passage) - .90) * 10),1)}
 .river-journey .lane-static{opacity:clamp(0,calc((var(--passage) - .46) / .20),1)}
 .river-journey .vertical-lane{--lane-step:420px;height:calc(var(--lane-start) + 9 * var(--lane-step) + max(370px,62svh))}
@@ -31,3 +31,11 @@
 @media(max-width:700px){.river-journey .lane-position{top:107px;right:6%}.river-journey .lane-scroll-hint{display:none}}
 
 .river-journey .confluence-entry{opacity:clamp(0,calc((.48 - var(--passage))*6),1)}
+
+/* One viewport coordinate system. Native scroll moves labels; only the shader moves dust.
+   Avoid the old sticky + rAF translateY cancellation that could trail compositor scrolling. */
+.river-journey .confluence-map .vertical-lane .gravity-viewport,
+.river-journey .confluence-map .vertical-lane.is-still .gravity-viewport,
+.river-journey .confluence-map .vertical-lane.is-fallback .gravity-viewport{position:fixed;inset:0 0 auto;height:100svh;transform:none}
+
+.river-journey .lane-position{position:fixed;z-index:6}

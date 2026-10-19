@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import {RISE} from './river-handoff';
+import {RISE,approachCamera,smooth,readJourney} from './river-handoff';
 import {newInput,hitProxy,bindMobiusInput,type MaterialHit} from './mobius-input';
-import {galaxyLayout,grains,mobiusPoint,project,depthLight,seeded,TAU,type GalaxyLayout} from './mobius-model';
+import {galaxyLayout,grains,mobiusPoint,project,depthLight,seeded,TAU,world,type GalaxyLayout} from './mobius-model';
 export type MobiusState={progress:number;reduced:boolean;paused:boolean;velocity:number;velocityAt:number};
 /** Three batched draws; immutable attributes, continuous GPU flow, no post-processing. */
 export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=>MobiusState,onFallback:()=>void){
@@ -39,6 +39,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
   float fold=pow(1.-abs(n.z),4.)*.28;
   vAlpha=2.2*aStyle.y*(lit*facing+fold)*(.50+.50*near)*(1.+signal+local*.85)*(1.+smoothstep(.02,.22,uProgress)*exp(-pow(abs(sin((u-3.2)*.5))*9.,2.))*.48);
   vAlpha*=1.+sin(uTime*.6+aParam.w)*.035*(1.-uReduced);
+  vAlpha*=1.-smoothstep(.62+near*.14,.90+near*.10,uProgress);
   vColor=mix(vec3(.40,.50,.62),vec3(.84,.89,.94),near);vStar=aStyle.z;
  }`;
  const vertex=common+`void main(){float u=aParam.x+uTravel*aParam.z;vec3 p=location(u,aParam.y);tone(u,aParam.y,p);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aStyle.x*(.75+.45*vDepth)*uRatio*18./-mv.z,.8,7.);}`;
@@ -53,7 +54,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  const lm=new THREE.ShaderMaterial({uniforms,vertexShader:lineVertex,fragmentShader:lineFragment,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending});resources.push(lm);const lines=new THREE.LineSegments(geometry(lp,ls,lo),lm);lines.frustumCulled=false;scene.add(lines);
  const tp:number[]=[],ts:number[]=[],to:number[]=[];for(const g of gs.filter(g=>g.star).slice(0,mobile?18:48))for(let j=0;j<6;j++)for(const k of [j,j+1]){tp.push(g.u,g.v,g.rate,g.seed);ts.push(k/6,.22,1);to.push(...g.offset)}const tails=new THREE.LineSegments(geometry(tp,ts,to),lm);tails.frustumCulled=false;scene.add(tails);
  }
- function paint(now:number){raf=0;const st=state();if(disposed||!ready||document.hidden||!visible||st.paused)return;const interval=mobile?33.33:16.66;if(!st.reduced&&last&&now-last<interval-1){raf=requestAnimationFrame(paint);return}const dt=last?Math.max(0,Math.min(.06,(now-last)/1000)):0;last=now;
+ function paint(now:number){raf=0;const st={...state(),progress:readJourney(host).progress};if(disposed||!ready||document.hidden||!visible||st.paused)return;const interval=16.66;if(!st.reduced&&last&&now-last<interval-1){raf=requestAnimationFrame(paint);return}const dt=last?Math.max(0,Math.min(.06,(now-last)/1000)):0;last=now;
  if(!st.reduced){time+=dt;energy+=(Math.min(1,Math.abs(st.velocity)*Math.exp(-(now-st.velocityAt)/220)*.6)-energy)*(1-Math.exp(-dt*5));travel+=dt*(.022+energy*.12)}else energy=0;
  const activeInput=!st.reduced&&st.progress<.35;
  if(!activeInput){input.hover=0;input.tiltTarget=0;input.eventAt=-10000}
@@ -63,21 +64,24 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  materialInto(eventPoint,input.eventU+eventAge*.8,input.eventV);
  uniforms.uHover.value=hover;uniforms.uTilt.value=tilt;uniforms.uEvent.value=eventAge<2.5?Math.exp(-eventAge*1.6):0;
  uniforms.uTime.value=st.reduced?0:time;uniforms.uTravel.value=st.reduced?0:travel;uniforms.uEnergy.value=energy;uniforms.uProgress.value=st.progress;uniforms.uReduced.value=st.reduced?1:0;
- const begin=performance.now();renderer.render(scene,camera);drawMs=performance.now()-begin;costs[costIndex++%240]=drawMs;frames++;host.dataset.renderer='webgl';if(!st.reduced)raf=requestAnimationFrame(paint);
+ const eye=approachCamera(layout,st.progress);camera.position.set(eye[0],eye[1],eye[2]);camera.updateMatrixWorld();const begin=performance.now();renderer.render(scene,camera);drawMs=performance.now()-begin;costs[costIndex++%240]=drawMs;frames++;host.dataset.renderer='webgl';if(!st.reduced)raf=requestAnimationFrame(paint);
  }
  function wake(){if(disposed)return;if(document.hidden||!visible||state().paused){input.hover=0;input.tiltTarget=0;input.eventAt=-10000;hover=0;tilt=0;cancelAnimationFrame(raf);raf=0;last=0;return}if(!raf)raf=requestAnimationFrame(paint)}
- function resize(){const r=host.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height);if(w===previousWidth&&h===previousHeight)return;const wasMobile=mobile;mobile=w<701;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.2:1.5));renderer.setSize(w,h,false);uniforms.uRatio.value=renderer.getPixelRatio();const l=galaxyLayout(w,h);layout=l;bounds={left:r.left,top:r.top+state().progress*h*RISE};proxy=hitProxy(l);uniforms.uMatrix.value.fromArray(l.matrix);uniforms.uScale.value=l.scale;uniforms.uOffset.value.fromArray(l.offset);if(!builds||wasMobile!==mobile)build();previousWidth=w;previousHeight=h;wake()}
+ function resize(){const r=host.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height);if(w===previousWidth&&h===previousHeight)return;const wasMobile=mobile;mobile=w<701;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.5:1.5));renderer.setSize(w,h,false);uniforms.uRatio.value=renderer.getPixelRatio();const l=galaxyLayout(w,h);layout=l;bounds={left:r.left,top:r.top+state().progress*h*RISE};proxy=hitProxy(l);uniforms.uMatrix.value.fromArray(l.matrix);uniforms.uScale.value=l.scale;uniforms.uOffset.value.fromArray(l.offset);if(!builds||wasMobile!==mobile)build();previousWidth=w;previousHeight=h;wake()}
  const pick=(x:number,y:number):MaterialHit|null=>proxy?.(x-bounds.left,y-bounds.top+state().progress*previousHeight*RISE,mobile?25:38)||null;
  const unbind=bindMobiusInput(host,input,pick,()=>!disposed&&!document.hidden&&visible&&!state().paused&&!state().reduced&&state().progress<.28,wake);
  function loss(e:Event){e.preventDefault();onFallback()}
  const observer=new IntersectionObserver(es=>{visible=es[0].isIntersecting;wake()});observer.observe(host);const size=new ResizeObserver(resize);size.observe(host);document.addEventListener('visibilitychange',wake);canvas.addEventListener('webglcontextlost',loss);
  const gl=renderer.getContext(),debug=gl.getExtension('WEBGL_debug_renderer_info');
- (host as HTMLElement&{fieldSnapshot?:()=>unknown}).fieldSnapshot=()=>({renderer:'WebGLRenderer',disposed,cameraType:camera.type,frames,elapsed:time,travel,energy,progress:state().progress,velocity:state().velocity,input:{...input,hoverLevel:hover,tilt,eventLevel:uniforms.uEvent.value,eventPoint:eventPoint.toArray(),hoverPoint:hoverPoint.toArray()},interactionAnchors:layout?[.7,2.8,4.9].map(u=>({u,v:0,screen:project(mobiusPoint(u,0),layout)})):[],drawCalls:renderer.info.render.calls,particles:mobile?11000:24000,pixelRatio:renderer.getPixelRatio(),geometryBuilds:builds,geometryCount:renderer.info.memory.geometries,renderSubmissionMs:drawMs,submissionSamples:Array.from(costs.slice(0,Math.min(costIndex,240))),gpu:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):'unavailable'});
+ (host as HTMLElement&{fieldSnapshot?:()=>unknown}).fieldSnapshot=()=>({renderer:'WebGLRenderer',disposed,cameraType:camera.type,frames,elapsed:time,travel,energy,progress:state().progress,velocity:state().velocity,input:{...input,hoverLevel:hover,tilt,eventLevel:uniforms.uEvent.value,eventPoint:eventPoint.toArray(),hoverPoint:hoverPoint.toArray()},interactionAnchors:layout?[.7,2.8,4.9].map(u=>({u,v:0,screen:project(mobiusPoint(u,0),layout)})):[],drawCalls:renderer.info.render.calls,particles:mobile?11000:24000,pixelRatio:renderer.getPixelRatio(),geometryBuilds:builds,geometryCount:renderer.info.memory.geometries,renderSubmissionMs:drawMs,submissionSamples:Array.from(costs.slice(0,Math.min(costIndex,240))),cameraPosition:camera.position.toArray(),gpu:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):'unavailable'});
  resize();renderer.compileAsync(scene,camera).then(()=>{if(!disposed){ready=true;wake()}}).catch(()=>{if(!disposed)onFallback()});return{wake,dispose(){disposed=true;unbind();cancelAnimationFrame(raf);observer.disconnect();size.disconnect();document.removeEventListener('visibilitychange',wake);canvas.removeEventListener('webglcontextlost',loss);resources.forEach(r=>r.dispose());scene.clear();renderer.dispose();renderer.forceContextLoss();delete(host as HTMLElement&{fieldSnapshot?:()=>unknown}).fieldSnapshot}};
 }
 /** Honest static fallback: the same seeded particle coordinates, projected once on resize. */
-export function drawMobiusStill(canvas:HTMLCanvasElement){
- const r=canvas.getBoundingClientRect(),w=r.width,h=r.height;if(!w||!h)return;const d=Math.min(devicePixelRatio,1.5);canvas.width=w*d;canvas.height=h*d;const ctx=canvas.getContext('2d');if(!ctx)return;ctx.scale(d,d);ctx.clearRect(0,0,w,h);
- const l=galaxyLayout(w,h),points=grains(w<701?6500:12000).map(g=>{const p=mobiusPoint(g.u,g.v),s=project(p.map((v,i)=>v+g.offset[i]),l);return{g,s}}).sort((a,b)=>a.s[2]-b.s[2]);
- for(const {g,s} of points){const lit=depthLight(g.u,g.v,s[2],l),alpha=Math.min(.88,g.alpha*lit.alpha*.65),radius=g.size*(.75+.45*lit.near)*.42;ctx.fillStyle=`rgba(${Math.round(125+89*lit.near)},${Math.round(150+77*lit.near)},${Math.round(180+60*lit.near)},${alpha})`;ctx.beginPath();ctx.arc(s[0],s[1],radius,0,TAU);ctx.fill()}
+const stillCache=new WeakMap<HTMLCanvasElement,{w:number;h:number;l:GalaxyLayout;points:{g:ReturnType<typeof grains>[number];p:number[];near:number;alpha:number}[]}>();
+export function drawMobiusStill(canvas:HTMLCanvasElement,progress=0){
+ const r=canvas.getBoundingClientRect(),w=r.width,h=r.height;if(!w||!h)return;let cache=stillCache.get(canvas);const d=Math.min(devicePixelRatio,1.5);
+ if(!cache||cache.w!==w||cache.h!==h){const fitted=galaxyLayout(w,h);canvas.width=w*d;canvas.height=h*d;cache={w,h,l:fitted,points:grains(w<701?6500:12000).map(g=>{const l=fitted;const p=world(mobiusPoint(g.u,g.v).map((v,i)=>v+g.offset[i]),l),lit=depthLight(g.u,g.v,p[2],l);return{g,p,near:lit.near,alpha:lit.alpha}})};stillCache.set(canvas,cache)}
+ const ctx=canvas.getContext('2d');if(!ctx)return;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);const l=cache.l;
+ const eye=approachCamera(l,progress),focal=h/(2*Math.tan(35*Math.PI/360));
+ for(const {g,p,near,alpha:litAlpha} of cache.points){const f=focal/Math.max(.15,eye[2]-p[2]),x=w/2+(p[0]-eye[0])*f,y=h/2-(p[1]-eye[1])*f;if(x<-10||x>w+10||y<-10||y>h+10)continue;const alpha=Math.min(.88,g.alpha*litAlpha*.65)*(1-smooth(.62+near*.14,.90+near*.10,progress)),radius=g.size*(.75+.45*near)*.42;ctx.fillStyle=`rgba(${Math.round(125+89*near)},${Math.round(150+77*near)},${Math.round(180+60*near)},${alpha})`;ctx.beginPath();ctx.arc(x,y,radius,0,TAU);ctx.fill()}
 }
