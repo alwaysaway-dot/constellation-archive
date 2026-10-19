@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {passage} from './passage-model';
 import {RISE,approachCamera,smooth,readJourney} from './river-handoff';
 import {newInput,hitProxy,bindMobiusInput,type MaterialHit} from './mobius-input';
 import {galaxyLayout,grains,mobiusPoint,project,depthLight,seeded,TAU,world,type GalaxyLayout} from './mobius-model';
@@ -12,10 +13,10 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  const hoverTarget=new THREE.Vector3(),hoverPoint=new THREE.Vector3(),eventPoint=new THREE.Vector3();
  const materialInto=(out:THREE.Vector3,u:number,v:number)=>out.set((3.15+v*Math.cos(u/2))*Math.cos(u),(3.15+v*Math.cos(u/2))*Math.sin(u),v*Math.sin(u/2));
  const costs=new Float32Array(240);let costIndex=0;
- const uniforms={uTime:{value:0},uTravel:{value:0},uEnergy:{value:0},uProgress:{value:0},uRatio:{value:1},uMatrix:{value:new THREE.Matrix3()},uScale:{value:1},uOffset:{value:new THREE.Vector3()},uReduced:{value:0},uHover:{value:0},uTilt:{value:0},uHoverPoint:{value:hoverPoint},uEventPoint:{value:eventPoint},uEvent:{value:0}};
+ const uniforms={uTime:{value:0},uTravel:{value:0},uEnergy:{value:0},uProgress:{value:0},uRatio:{value:1},uMatrix:{value:new THREE.Matrix3()},uScale:{value:1},uOffset:{value:new THREE.Vector3()},uReduced:{value:0},uHover:{value:0},uTilt:{value:0},uHoverPoint:{value:hoverPoint},uEventPoint:{value:eventPoint},uEvent:{value:0},uRelease:{value:0},uHomeAlpha:{value:1}};
  const resources:(THREE.BufferGeometry|THREE.Material)[]=[];
  const common=`attribute vec4 aParam;attribute vec3 aStyle;
- uniform float uTime,uTravel,uEnergy,uProgress,uRatio,uScale,uReduced,uHover,uTilt,uEvent;
+ uniform float uTime,uTravel,uEnergy,uProgress,uRatio,uScale,uReduced,uHover,uTilt,uEvent,uRelease,uHomeAlpha;
  uniform mat3 uMatrix;uniform vec3 uOffset,uHoverPoint,uEventPoint;
  varying float vAlpha;varying float vStar;varying vec3 vColor;varying float vDepth;
  vec3 materialPoint(float u,float v){return vec3((3.15+v*cos(u*.5))*cos(u),(3.15+v*cos(u*.5))*sin(u),v*sin(u*.5));}
@@ -26,7 +27,12 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
   vec3 m=materialPoint(u,v),p=m+position;float local=localInfluence(m)*(1.-smoothstep(.12,.35,uProgress));
   p+=surfaceNormal(u,v)*local*.07;
   // The original band remains intact; the journey moves the viewport, not its topology.
-  return pose(uMatrix*p)*uScale+uOffset;
+  vec3 q=pose(uMatrix*p)*uScale+uOffset;
+  float depth=clamp((q.z/uScale+3.8)/7.6,0.,1.);
+  float disperse=smoothstep(.10+(1.-depth)*.16,.91,uRelease);
+  vec3 drift=vec3(sin(aParam.w*1.37),cos(aParam.w*2.17),sin(aParam.w*.71));
+  q+=drift*disperse*vec3(4.5,3.2,2.8);
+  return q;
  }
  void tone(float u,float v,vec3 p){
   vec3 n=normalize(pose(uMatrix*surfaceNormal(u,v)));
@@ -39,7 +45,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
   float fold=pow(1.-abs(n.z),4.)*.28;
   vAlpha=2.2*aStyle.y*(lit*facing+fold)*(.50+.50*near)*(1.+signal+local*.85)*(1.+smoothstep(.02,.22,uProgress)*exp(-pow(abs(sin((u-3.2)*.5))*9.,2.))*.48);
   vAlpha*=1.+sin(uTime*.6+aParam.w)*.035*(1.-uReduced);
-  vAlpha*=1.-smoothstep(.62+near*.14,.90+near*.10,uProgress);
+  vAlpha*=uHomeAlpha;
   vColor=mix(vec3(.40,.50,.62),vec3(.84,.89,.94),near);vStar=aStyle.z;
  }`;
  const vertex=common+`void main(){float u=aParam.x+uTravel*aParam.z;vec3 p=location(u,aParam.y);tone(u,aParam.y,p);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aStyle.x*(.75+.45*vDepth)*uRatio*18./-mv.z,.8,7.);}`;
@@ -64,7 +70,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  materialInto(eventPoint,input.eventU+eventAge*.8,input.eventV);
  uniforms.uHover.value=hover;uniforms.uTilt.value=tilt;uniforms.uEvent.value=eventAge<2.5?Math.exp(-eventAge*1.6):0;
  uniforms.uTime.value=st.reduced?0:time;uniforms.uTravel.value=st.reduced?0:travel;uniforms.uEnergy.value=energy;uniforms.uProgress.value=st.progress;uniforms.uReduced.value=st.reduced?1:0;
- const eye=approachCamera(layout,st.progress);camera.position.set(eye[0],eye[1],eye[2]);camera.updateMatrixWorld();const begin=performance.now();renderer.render(scene,camera);drawMs=performance.now()-begin;costs[costIndex++%240]=drawMs;frames++;host.dataset.renderer='webgl';if(!st.reduced)raf=requestAnimationFrame(paint);
+ const v=passage(st.progress,st.reduced);uniforms.uRelease.value=v.release;uniforms.uHomeAlpha.value=v.home;const eye=approachCamera(layout,st.reduced?0:smooth(0,.34,st.progress)*.85);camera.position.set(eye[0],eye[1],eye[2]);camera.updateMatrixWorld();const begin=performance.now();renderer.render(scene,camera);drawMs=performance.now()-begin;costs[costIndex++%240]=drawMs;frames++;host.dataset.renderer='webgl';if(!st.reduced)raf=requestAnimationFrame(paint);
  }
  function wake(){if(disposed)return;if(document.hidden||!visible||state().paused){input.hover=0;input.tiltTarget=0;input.eventAt=-10000;hover=0;tilt=0;cancelAnimationFrame(raf);raf=0;last=0;return}if(!raf)raf=requestAnimationFrame(paint)}
  function resize(){const r=host.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height);if(w===previousWidth&&h===previousHeight)return;const wasMobile=mobile;mobile=w<701;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.5:1.5));renderer.setSize(w,h,false);uniforms.uRatio.value=renderer.getPixelRatio();const l=galaxyLayout(w,h);layout=l;bounds={left:r.left,top:r.top+state().progress*h*RISE};proxy=hitProxy(l);uniforms.uMatrix.value.fromArray(l.matrix);uniforms.uScale.value=l.scale;uniforms.uOffset.value.fromArray(l.offset);if(!builds||wasMobile!==mobile)build();previousWidth=w;previousHeight=h;wake()}
@@ -78,10 +84,10 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
 }
 /** Honest static fallback: the same seeded particle coordinates, projected once on resize. */
 const stillCache=new WeakMap<HTMLCanvasElement,{w:number;h:number;l:GalaxyLayout;points:{g:ReturnType<typeof grains>[number];p:number[];near:number;alpha:number}[]}>();
-export function drawMobiusStill(canvas:HTMLCanvasElement,progress=0){
+export function drawMobiusStill(canvas:HTMLCanvasElement,progress=0,reduced=false){
  const r=canvas.getBoundingClientRect(),w=r.width,h=r.height;if(!w||!h)return;let cache=stillCache.get(canvas);const d=Math.min(devicePixelRatio,1.5);
  if(!cache||cache.w!==w||cache.h!==h){const fitted=galaxyLayout(w,h);canvas.width=w*d;canvas.height=h*d;cache={w,h,l:fitted,points:grains(w<701?6500:12000).map(g=>{const l=fitted;const p=world(mobiusPoint(g.u,g.v).map((v,i)=>v+g.offset[i]),l),lit=depthLight(g.u,g.v,p[2],l);return{g,p,near:lit.near,alpha:lit.alpha}})};stillCache.set(canvas,cache)}
  const ctx=canvas.getContext('2d');if(!ctx)return;ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);const l=cache.l;
- const eye=approachCamera(l,progress),focal=h/(2*Math.tan(35*Math.PI/360));
- for(const {g,p,near,alpha:litAlpha} of cache.points){const f=focal/Math.max(.15,eye[2]-p[2]),x=w/2+(p[0]-eye[0])*f,y=h/2-(p[1]-eye[1])*f;if(x<-10||x>w+10||y<-10||y>h+10)continue;const alpha=Math.min(.88,g.alpha*litAlpha*.65)*(1-smooth(.62+near*.14,.90+near*.10,progress)),radius=g.size*(.75+.45*near)*.42;ctx.fillStyle=`rgba(${Math.round(125+89*near)},${Math.round(150+77*near)},${Math.round(180+60*near)},${alpha})`;ctx.beginPath();ctx.arc(x,y,radius,0,TAU);ctx.fill()}
+ const view=passage(progress,reduced);const eye=approachCamera(l,reduced?0:smooth(0,.34,progress)*.85),focal=h/(2*Math.tan(35*Math.PI/360));
+ for(const {g,p:base,near,alpha:litAlpha} of cache.points){const spread=smooth(.10+(1-near)*.16,.91,view.release);const p=base.map((v,i)=>v+[Math.sin(g.seed*1.37)*4.5,Math.cos(g.seed*2.17)*3.2,Math.sin(g.seed*.71)*2.8][i]*spread);const f=focal/Math.max(.15,eye[2]-p[2]),x=w/2+(p[0]-eye[0])*f,y=h/2-(p[1]-eye[1])*f;if(x<-10||x>w+10||y<-10||y>h+10)continue;const alpha=Math.min(.88,g.alpha*litAlpha*.65)*view.home,radius=g.size*(.75+.45*near)*.42;ctx.fillStyle=`rgba(${Math.round(125+89*near)},${Math.round(150+77*near)},${Math.round(180+60*near)},${alpha})`;ctx.beginPath();ctx.arc(x,y,radius,0,TAU);ctx.fill()}
 }

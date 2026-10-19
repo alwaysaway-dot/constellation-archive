@@ -8,7 +8,7 @@ export type RiverHost=HTMLElement&{riverState?:RiverJourney};
 /** A translation through the near band, never a deformation of the half-twist. */
 export function approachCamera(l:GalaxyLayout,progress:number){
  const p=smooth(0,1,progress),s=world(mobiusPoint(SOURCE_U,SOURCE_V),l),z=18-(l.width<701?12:8)*p;
- const targetX=l.width*(l.width<701?.35:.4),targetY=l.height*(.64-.80*p),f=l.height/(2*Math.tan(35*Math.PI/360));
+ const targetX=l.width*(l.width<701?.35:.4),targetY=l.height*(.64-.12*p),f=l.height/(2*Math.tan(35*Math.PI/360));
  const aim=smooth(.08,.72,progress);
  return [(s[0]-(targetX-l.width/2)*(z-s[2])/f)*aim,(s[1]-(l.height/2-targetY)*(z-s[2])/f)*aim,z];
 }

@@ -21,7 +21,7 @@ export function PreviewDrawer({song,player,close}:{song:Song;player:Player;close
  },[song.id,player.stopPreview]);
  return <dialog ref={ref} className="preview-drawer" aria-labelledby="preview-title" onCancel={e=>{e.preventDefault();close()}} onClick={e=>{if(e.target===e.currentTarget)close()}}>
   <div className="preview-panel">
-   <button className="drawer-close" aria-label="关闭试听抽屉" onClick={close} autoFocus>关闭 <Icon kind="close"/></button>
+   <button className="drawer-close overlay-close" aria-label="关闭试听抽屉" onClick={close} autoFocus><Icon kind="close"/></button>
    <p className="eyebrow">其他作品 · LISTENING ROOM</p>
    <h2 id="preview-title">{song.title}</h2>
    <p className="preview-credit">阿尾 / alwaysaway</p>

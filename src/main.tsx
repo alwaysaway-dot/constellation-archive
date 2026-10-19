@@ -20,12 +20,13 @@ import './confluence.css';
 import './mobius.css';
 import './vertical-lane.css';
 import './river-source.css';
+import './six-stage.css';
 const Star=()=> <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 1v30M1 16h30M6 6l20 20M6 26L26 6" stroke="currentColor" strokeWidth=".7"/><circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth=".7"/></svg>;
 
-function route(){const h=location.hash.slice(1);if(h==='archive')return 'map';if(h==='albums'||h.startsWith('album/')){history.replaceState(null,'','#works');return 'works'}if(['map','works'].includes(h))return h;if(/^work\/[1-9]\d*$/.test(h)&&songById(Number(h.slice(5)))){if(songById(Number(h.slice(5)))!.featured)return h;history.replaceState(null,'','#works');return 'works'}return 'home'}
+function route(){const h=location.hash.slice(1);if(h==='archive')return 'map';if(h==='albums'||h.startsWith('album/')){history.replaceState(null,'','#works');return 'works'}if(['map','works','about'].includes(h))return h;if(/^work\/[1-9]\d*$/.test(h)&&songById(Number(h.slice(5)))){if(songById(Number(h.slice(5)))!.featured)return h;history.replaceState(null,'','#works');return 'works'}return 'home'}
 function App(){
- const [page,setPage]=useState(route),[menuOpen,setMenuOpen]=useState(false),[selected,setSelected]=useState<number|null>(null),[atMap,setAtMap]=useState(false),[about,setAbout]=useState(false),[catalogueFilter,setCatalogueFilter]=useState('all'),[catalogueVisit,setCatalogueVisit]=useState(0);
- const {reduced,systemReduced,choose}=useMotionPreference();
+ const [page,setPage]=useState(route),[menuOpen,setMenuOpen]=useState(false),[selected,setSelected]=useState<number|null>(null),[atMap,setAtMap]=useState(false),[catalogueFilter,setCatalogueFilter]=useState('other'),[catalogueVisit,setCatalogueVisit]=useState(0);
+ const {reduced}=useMotionPreference();
  const journey=page==='home'||page==='map';
  const [lastSignal,setLastSignal]=useState<number|null>(page.startsWith('work/')?Number(page.split('/')[1]):null);
  const orbitMemory=useRef({x:0,y:0});
@@ -41,9 +42,8 @@ function App(){
  const readScroll=()=>document.body.style.position==='fixed'?-(parseFloat(document.body.style.top)||0):window.scrollY;
  const navigate=(to:string)=>{
   setMenuOpen(false);cancelTransition();
-  if(to==='about'){setAbout(true);return}
   if(to==='other'){setCatalogueFilter('other');setCatalogueVisit(v=>v+1);to='works'}
-  if(journey&&(to==='home'||to==='map')){if(to==='home'){mapMemory.current={id:null,scroll:0};Object.assign(orbitMemory.current,{x:0,y:0});setLastSignal(null);setAtMap(false)}requestAnimationFrame(()=>window.scrollTo({top:to==='home'?0:mapStart(),behavior:to==='home'||reduced?'instant':'smooth'}));return}
+  if(journey&&(to==='home'||to==='map')){if(to==='home'){mapMemory.current={id:null,scroll:0};Object.assign(orbitMemory.current,{x:0,y:0});setLastSignal(null);setAtMap(false)}requestAnimationFrame(()=>window.scrollTo({top:to==='home'?0:mapStart(),behavior:'instant'}));return}
   positionsMemory.current[pageRef.current]=readScroll();if(journey)mapMemory.current.scroll=readScroll();location.hash=to;
  };
  useEffect(()=>{const change=()=>{if(transition.current){clearTimeout(transition.current);transition.current=null}const next=route();positionsMemory.current[pageRef.current]=readScroll();setMenuOpen(false);if(pageRef.current==='map')mapMemory.current.scroll=readScroll();pageRef.current=next;setPage(next);setSelected(null)};window.addEventListener('hashchange',change);return()=>window.removeEventListener('hashchange',change)},[]);
@@ -62,17 +62,17 @@ function App(){
  return <div className={`app confluence-edition ${detail?'warm':''} ${journey?'home-page':''} ${miniVisible?'has-mini-player':''}`}>
  <a className="skip" href="#main" onClick={e=>{e.preventDefault();main.current?.focus()}}>跳至主要内容</a><div className="quiet-space" aria-hidden="true"/><div className="ambient" aria-hidden="true"/>
  <header className="header"><button className="brand" onClick={()=>navigate('home')} aria-label="阿尾 首页"><Star/><span>阿尾<span className="brand-caption">alwaysaway</span></span></button>
- <nav className="desktop-nav" aria-label="主导航">{[['map','星图'],['other','其他作品'],['about','关于']].map(([id,label])=><button key={id} aria-current={(id==='map'&&journey&&atMap)||(id==='other'&&page==='works')?'page':undefined} onClick={()=>navigate(id)}>{label}</button>)}</nav>
+ <nav className="desktop-nav" aria-label="主导航">{[['map','星图'],['other','其他作品'],['about','关于']].map(([id,label])=><button key={id} aria-current={(id==='map'&&journey&&atMap)||(id==='other'&&page==='works')||(id==='about'&&page==='about')?'page':undefined} onClick={()=>navigate(id)}>{label}</button>)}</nav>
  <button className="menu-toggle" aria-label="打开导航" aria-haspopup="dialog" aria-expanded={menuOpen} onClick={()=>setMenuOpen(true)}><Icon kind="menu"/></button>
  </header>
- {menuOpen&&<NavigationVeil reduced={reduced} systemReduced={systemReduced} chooseMotion={choose} page={journey?(atMap?'map':'home'):page==='works'?'other':page} close={()=>setMenuOpen(false)} navigate={navigate}/>}
- {about&&<AboutIdentity close={()=>setAbout(false)}/>}
+ {menuOpen&&<NavigationVeil page={journey?(atMap?'map':'home'):page==='works'?'other':page} close={()=>setMenuOpen(false)} navigate={navigate}/>}
  <main data-page={journey?(atMap?'map':'home'):page} id="main" ref={main} tabIndex={-1} key={journey?'journey':page}>
- {journey&&<Confluence reduced={reduced} paused={menuOpen||about} onPhase={value=>{if(!['','home','map'].includes(location.hash.slice(1)))return;setAtMap(value);const hash=value?'#map':'#home';if(location.hash!==hash)history.replaceState(null,'',hash)}} renderMap={paused=><GravityScene mode="map" reduced={reduced} paused={paused} selected={selected} last={lastSignal} playing={player.playing} playingId={player.trackId} memory={orbitMemory.current} enter={enter}/>}/>}
+ {journey&&<Confluence reduced={reduced} paused={menuOpen} onPhase={value=>{if(!['','home','map'].includes(location.hash.slice(1)))return;setAtMap(value);const hash=value?'#map':'#home';if(location.hash!==hash)history.replaceState(null,'',hash)}} renderMap={paused=><GravityScene mode="map" reduced={reduced} paused={paused} selected={selected} last={lastSignal} playing={player.playing} playingId={player.trackId} memory={orbitMemory.current} enter={enter}/>}/>}
  {work&&<SongDetail work={work} player={player} reduced={reduced} navigate={navigate} enter={enter} returnTo={returnPage.current}/>}
+ {page==='about'&&<AboutIdentity/>}
  {page==='works'&&<CataloguePages key={catalogueVisit} enter={enter} player={player} initialFilter={catalogueFilter}/>}
  </main>
- {!journey&&<footer className="footer"><span>阿尾 <span className="subtle">alwaysaway</span></span><span className="subtle">星图档案馆 / Constellation Archive</span><span className="mono subtle">SOUND, IN ORBIT.</span></footer>}
+ {!journey&&<footer className="footer"><span>阿尾 <span className="subtle">alwaysaway</span></span><span className="subtle">星图档案馆 / Constellation Archive</span><button className="footer-about" onClick={()=>navigate('about')}>关于与联系</button></footer>}
  {miniVisible&&<aside ref={miniRef} className="mini-player" aria-label="持续播放控制"><img src={playingWork.art} alt=""/><button className="mini-title" onClick={()=>navigate('work/'+player.trackId)}><span className="mono">{player.playing?'正在播放':'已暂停'} / {featuredNumber(player.trackId)?String(featuredNumber(player.trackId)).padStart(2,'0'):'作品档案'}</span><strong>{playingWork.title}</strong></button><span className="mini-time mono">{format(player.time)} / {format(player.duration)}</span><input aria-label="迷你播放器进度" type="range" min="0" max={player.duration} step="0.1" value={player.time} onChange={e=>player.seek(Number(e.target.value))}/><button className={`mini-play orbit-play ${player.playing?'is-playing':''}`} onClick={()=>player.toggle()} aria-label={player.playing?'暂停':'继续播放'}><Play playing={player.playing}/></button><button className="mini-close" aria-label={player.playing?'暂停并收起播放器':'收起播放器'} title={player.playing?'暂停并收起':'收起播放器'} onClick={()=>{player.minimize();main.current?.focus({preventScroll:true})}}><Icon kind="close"/></button></aside>}
  {player.error&&playingWork.featured&&active!==player.trackId&&<div className="error" role="alert">{player.error}<button onClick={()=>player.play()}>重试播放</button></div>}
  </div>

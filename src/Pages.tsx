@@ -26,16 +26,15 @@ export function SongDetail({work,player,reduced,navigate,enter,returnTo}:{work:S
 }
 function SongRow({song,enter,show}:{song:Song;enter:Navigation['enter'];show:(song:Song)=>void}) {
  const album=albumById(song.albumId);
- return <button className={`work-row ${song.featured?'':'text-work-row'}`} data-work-id={song.id} onClick={e=>{if(song.featured)enter(song.id);else{e.currentTarget.focus({preventScroll:true});show(song)}}}><span className="mono work-index">{featuredNumber(song.id)?String(featuredNumber(song.id)).padStart(2,'0'):'—'}</span>{song.featured&&song.art?<img src={song.art} alt="" loading="lazy" decoding="async"/>:null}<span className="work-name"><strong>{song.title}</strong><small>{[album?.title,song.language,song.release].filter(Boolean).join(' · ')||'作品资料整理中'}</small></span><span className="work-kind">{song.featured?'精选作品':'其他作品'}</span><span className="index-arrow"><Icon/></span></button>;
+ return <button className={`work-row ${song.featured?'':'text-work-row'}`} data-work-id={song.id} onClick={e=>{if(song.featured)enter(song.id);else{e.currentTarget.focus({preventScroll:true});show(song)}}}><span className="mono work-index">{featuredNumber(song.id)?String(featuredNumber(song.id)).padStart(2,'0'):'—'}</span><span className="work-name"><strong>{song.title}</strong>{album&&<small>{album.title}</small>}</span><span className="work-kind">{song.featured?'精选作品':'其他作品'}</span><span className="index-arrow"><Icon/></span></button>;
 }
 export function CataloguePages({enter,player,initialFilter='all'}: {player:Player;enter:Navigation['enter'];initialFilter?:string}){
  const [query,setQuery]=useState(''),[filter,setFilter]=useState(initialFilter),[shown,setShown]=useState<Song|null>(null);
  const filtered=[...featuredSongs,...otherSongs].filter(s=>(filter==='all'||(filter==='featured'?s.featured:!s.featured))&&s.title.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
  return <section className="catalogue-page">
- <p className="eyebrow">全部作品 <span className="little-line"/> ALL WORKS</p><h1>声音的完整轨迹。</h1><p className="catalogue-description">从精选作品开始，持续收录新的创作。</p>
+ <div className="works-heading"><h1>作品档案<small>Works Archive</small></h1><p>{featuredSongs.length+otherSongs.length} 首作品</p></div>
  <div className="catalogue-tools"><label className="search-label">搜索作品<input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="输入作品名称"/></label><div className="filter-group" aria-label="作品筛选">{[['all','全部'],['featured','精选十首'],['other','其他作品']].map(([id,label])=><button key={id} aria-pressed={filter===id} onClick={()=>setFilter(id)}>{label}</button>)}</div></div>
- <p className="catalogue-preview-note">{filter==='featured'?'精选作品可进入详情，完整聆听。':filter==='other'?'其他作品在此提供 30 秒试听。':'精选作品可进入详情完整聆听；其他作品提供 30 秒试听。'}{filter!=='featured'&&<small>其他作品完整版，可前往网易云音乐搜索「阿尾」或歌曲名称。</small>}</p>
- <p className="results-count" role="status">{filtered.length} 条作品记录</p><div className="works-list">{filtered.map(song=><SongRow key={song.id} song={song} enter={enter} show={setShown}/>)}</div>
+ <p className="results-count" role="status">{filtered.length} 首</p><div className="works-list">{filtered.map(song=><SongRow key={song.id} song={song} enter={enter} show={setShown}/>)}</div>
  {!filtered.length&&<div className="quiet-empty"><h2>没有找到匹配作品</h2><p>试试其他名称。</p>{query&&<button className="text-button" onClick={()=>setQuery('')}>清除搜索</button>}</div>}
  {shown&&<PreviewDrawer key={shown.id} song={shown} player={player} close={()=>setShown(null)}/>}
  </section>;
