@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 r=Path.cwd();base=os.environ.get('TEST_BASE','https://alwaysaway-music.liu1773237975.workers.dev');manifest=json.loads((r/'work/cloudflare/build-manifest.json').read_text());report={'base':base,'assets':[],'ranges':[],'missing':[]}
 def request(path,headers=None,head=False):
  with tempfile.TemporaryDirectory() as td:
-  cmd=['curl','-x','http://127.0.0.1:7892','-sS','--retry','2','--max-time','40','-D',td+'/headers','-o',td+'/body']
+  cmd=['curl','-x','http://127.0.0.1:7892','-sS','--retry','4','--retry-all-errors','--max-time','40','-D',td+'/headers','-o',td+'/body']
   if head:cmd+=['-I']
   for k,v in (headers or {}).items():cmd+=['-H',k+': '+v]
   subprocess.run(cmd+[base+path],check=True,capture_output=True)
