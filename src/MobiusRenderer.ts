@@ -1,10 +1,11 @@
 import * as THREE from 'three';
+import {createHabitat,habitatUniforms,habitatMaskGLSL,HABITAT_ENABLED} from './MobiusHabitat';
 import {createEntryPlan,entryCamera,entryState,type EntryPlan} from './ring-entry';
 import {RISE,smooth,readJourney} from './river-handoff';
 import {newInput,hitProxy,bindMobiusInput,type MaterialHit} from './mobius-input';
 import {galaxyLayout,grains,mobiusPoint,project,depthLight,seeded,TAU,world,type GalaxyLayout} from './mobius-model';
 export type MobiusState={progress:number;reduced:boolean;paused:boolean;velocity:number;velocityAt:number};
-/** Four batched draws (including the two tracked cores); immutable attributes, continuous GPU flow, no post-processing. */
+/** Four baseline draws; two additional batched habitat draws only while revealed. No post-processing. */
 export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=>MobiusState,onFallback:()=>void){
  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:false,powerPreference:'low-power'});renderer.setClearColor(0x030506,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
  const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(35,1,.1,80);camera.position.z=18;
@@ -13,9 +14,10 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  const hoverTarget=new THREE.Vector3(),hoverPoint=new THREE.Vector3(),eventPoint=new THREE.Vector3();
  const materialInto=(out:THREE.Vector3,u:number,v:number)=>out.set((3.15+v*Math.cos(u/2))*Math.cos(u),(3.15+v*Math.cos(u/2))*Math.sin(u),v*Math.sin(u/2));
  const costs=new Float32Array(240);let costIndex=0;
- const uniforms={uTime:{value:0},uTravel:{value:0},uEnergy:{value:0},uProgress:{value:0},uRatio:{value:1},uMatrix:{value:new THREE.Matrix3()},uScale:{value:1},uOffset:{value:new THREE.Vector3()},uReduced:{value:0},uHover:{value:0},uTilt:{value:0},uHoverPoint:{value:hoverPoint},uEventPoint:{value:eventPoint},uEvent:{value:0},uTakeover:{value:0},uFirst:{value:0},uSource:{value:new THREE.Vector3()}};
+ const eco=habitatUniforms();let habitat:ReturnType<typeof createHabitat>|null=null;
+ const uniforms={...eco,uTime:{value:0},uTravel:{value:0},uEnergy:{value:0},uProgress:{value:0},uRatio:{value:1},uMatrix:{value:new THREE.Matrix3()},uScale:{value:1},uOffset:{value:new THREE.Vector3()},uReduced:{value:0},uHover:{value:0},uTilt:{value:0},uHoverPoint:{value:hoverPoint},uEventPoint:{value:eventPoint},uEvent:{value:0},uTakeover:{value:0},uFirst:{value:0},uSource:{value:new THREE.Vector3()}};
  const resources:(THREE.BufferGeometry|THREE.Material)[]=[];
- const common=`attribute vec4 aParam;attribute vec3 aStyle;
+ const common=habitatMaskGLSL+`attribute vec4 aParam;attribute vec3 aStyle;
  uniform float uTime,uTravel,uEnergy,uProgress,uRatio,uScale,uReduced,uHover,uTilt,uEvent,uTakeover,uFirst;
  uniform mat3 uMatrix;uniform vec3 uOffset,uHoverPoint,uEventPoint,uSource;
  varying float vAlpha;varying float vStar;varying vec3 vColor;varying float vDepth;
@@ -25,7 +27,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  vec3 pose(vec3 p){float c=cos(uTilt),s=sin(uTilt);return vec3(p.x*c+p.z*s,p.y,-p.x*s+p.z*c);}
  vec3 location(float u,float v){
   vec3 m=materialPoint(u,v),p=m+position;float local=localInfluence(m)*(1.-smoothstep(.12,.35,uProgress));
-  p+=surfaceNormal(u,v)*local*.07;
+  p+=surfaceNormal(u,v)*local*.07*(1.-habitatMask(vec2(u,v)));
   // The original band remains intact; the journey moves the viewport, not its topology.
   vec3 q=pose(uMatrix*p)*uScale+uOffset;
   return q;
@@ -46,7 +48,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
   float replace=(1.-smoothstep(max(0.,radius-1.3*uScale),radius+.01,length(p-uSource)))*smoothstep(0.,.20,uTakeover);
   vAlpha*=1.-replace;
   if(aStyle.z>1.5)vAlpha=.9*(1.-uFirst);
-  vColor=mix(vec3(.40,.50,.62),vec3(.84,.89,.94),near);vStar=aStyle.z;
+  vColor=mix(vec3(.40,.50,.62),vec3(.84,.89,.94),near);float habitat=habitatMask(vec2(u,v));vColor=mix(vColor,vec3(.31,.40,.20),habitat*.4);vAlpha*=1.-smoothstep(.05,.7,habitat)*.9;vStar=aStyle.z;
  }`;
  const vertex=common+`void main(){float u=aParam.x+uTravel*aParam.z;vec3 p=location(u,aParam.y);tone(u,aParam.y,p);vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aStyle.x*(.75+.45*vDepth)*uRatio*18./-mv.z,.8,7.);}`;
  const fragment=`varying float vAlpha;varying float vStar;varying vec3 vColor;void main(){vec2 p=(gl_PointCoord-.5)*2.;float r=length(p);if(r>1.)discard;float dotShape=exp(-r*r*5.);float rays=(exp(-abs(p.x)*28.)+exp(-abs(p.y)*28.))*pow(max(0.,1.-r),2.)*.22*vStar;float a=clamp(vAlpha*(dotShape+rays),0.,.92);if(a<.018)discard;gl_FragColor=vec4(vColor,a);}`;
@@ -54,7 +56,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  const lineFragment=`varying float vAlpha;varying vec3 vColor;void main(){gl_FragColor=vec4(vColor,vAlpha);}`;
  function geometry(params:number[],style:number[],offsets:number[]){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(offsets,3));g.setAttribute('aParam',new THREE.Float32BufferAttribute(params,4));g.setAttribute('aStyle',new THREE.Float32BufferAttribute(style,3));resources.push(g);return g}
  let anchorGeometry:THREE.BufferGeometry;
- function build(){scene.clear();resources.splice(0).forEach(r=>r.dispose());builds++;const gs=grains(mobile?11000:24000),p:number[]=[],s:number[]=[],o:number[]=[];for(const g of gs){p.push(g.u,g.v,g.rate,g.seed);s.push(g.size,g.alpha,g.star?1:0);o.push(...g.offset)}
+ function build(){habitat?.dispose();habitat=null;eco.uHabitatGains.value.set(0,0);scene.clear();resources.splice(0).forEach(r=>r.dispose());builds++;const gs=grains(mobile?11000:24000),p:number[]=[],s:number[]=[],o:number[]=[];for(const g of gs){p.push(g.u,g.v,g.rate,g.seed);s.push(g.size,g.alpha,g.star?1:0);o.push(...g.offset)}
 
  const mat=new THREE.ShaderMaterial({uniforms,vertexShader:vertex,fragmentShader:fragment,transparent:true,depthWrite:true,blending:THREE.NormalBlending});resources.push(mat);const pts=new THREE.Points(geometry(p,s,o),mat);pts.frustumCulled=false;scene.add(pts);
  const anchorMat=new THREE.ShaderMaterial({uniforms,vertexShader:vertex,fragmentShader:fragment,transparent:true,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending});resources.push(anchorMat);
@@ -64,6 +66,7 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  for(let i=0;i<(mobile?16:40);i++){const u=(i%2?2.3:4.9)+(rand()-.5)*1.1,v=(rand()*2-1)*1.12,len=.12+rand()*.30,rate=.8+rand()*.4;for(let j=0;j<14;j++)for(const k of [j,j+1]){const f=k/14;lp.push(u+f*len,v+Math.sin(f*3.14)*.025,rate,i);ls.push(0,Math.sin(f*Math.PI)*(.10+rand()*.07),0);lo.push(0,0,0)}}
  const lm=new THREE.ShaderMaterial({uniforms,vertexShader:lineVertex,fragmentShader:lineFragment,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending});resources.push(lm);const lines=new THREE.LineSegments(geometry(lp,ls,lo),lm);lines.frustumCulled=false;scene.add(lines);
  const tp:number[]=[],ts:number[]=[],to:number[]=[];for(const g of gs.filter(g=>g.star).slice(0,mobile?18:48))for(let j=0;j<6;j++)for(const k of [j,j+1]){tp.push(g.u,g.v,g.rate,g.seed);ts.push(k/6,.22,1);to.push(...g.offset)}const tails=new THREE.LineSegments(geometry(tp,ts,to),lm);tails.frustumCulled=false;scene.add(tails);
+ if(HABITAT_ENABLED&&!mobile&&matchMedia('(hover:hover) and (pointer:fine)').matches){habitat=createHabitat(scene,eco);habitat.pose(layout,tilt)}
  }
  function paint(now:number){raf=0;const st={...state(),progress:readJourney(host).progress};if(disposed||!ready||document.hidden||!visible||st.paused)return;const interval=16.66;if(!st.reduced&&last&&now-last<interval-1){raf=requestAnimationFrame(paint);return}const dt=last?Math.max(0,Math.min(.06,(now-last)/1000)):0;last=now;
  if(!st.reduced){time+=dt;energy+=(Math.min(1,Math.abs(st.velocity)*Math.exp(-(now-st.velocityAt)/220)*.6)-energy)*(1-Math.exp(-dt*5));travel+=dt*(.022+energy*.12)}else energy=0;
@@ -75,17 +78,18 @@ export function createMobius(canvas:HTMLCanvasElement,host:HTMLElement,state:()=
  materialInto(eventPoint,input.eventU+eventAge*.8,input.eventV);
  uniforms.uHover.value=hover;uniforms.uTilt.value=tilt;uniforms.uEvent.value=eventAge<2.5?Math.exp(-eventAge*1.6):0;
  uniforms.uTime.value=st.reduced?0:time;uniforms.uTravel.value=st.reduced?0:travel;uniforms.uEnergy.value=energy;uniforms.uProgress.value=st.progress;uniforms.uReduced.value=st.reduced?1:0;
+ habitat?.pose(layout,tilt);habitat?.update(dt,time,input.hover>0&&input.pointerType==='mouse',input.u,input.v,st.progress,st.reduced);
  const v=entryState(st.progress,st.reduced);uniforms.uTakeover.value=st.reduced?v.takeover:smooth(.70,.985,st.progress);uniforms.uFirst.value=v.first;const pose=entryCamera(entry,st.progress,st.reduced);camera.position.fromArray(pose.eye);camera.rotation.set(0,0,pose.roll);camera.updateMatrixWorld();const begin=performance.now();renderer.render(scene,camera);drawMs=performance.now()-begin;costs[costIndex++%240]=drawMs;frames++;host.dataset.renderer='webgl';if(!st.reduced)raf=requestAnimationFrame(paint);
  }
- function wake(){if(disposed)return;if(document.hidden||!visible||state().paused){input.hover=0;input.tiltTarget=0;input.eventAt=-10000;hover=0;tilt=0;cancelAnimationFrame(raf);raf=0;last=0;return}if(!raf)raf=requestAnimationFrame(paint)}
- function resize(){const r=host.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height);if(w===previousWidth&&h===previousHeight)return;const wasMobile=mobile;mobile=w<701;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.5:1.5));renderer.setSize(w,h,false);uniforms.uRatio.value=renderer.getPixelRatio();const l=galaxyLayout(w,h);layout=l;entry=createEntryPlan(w,h,l);uniforms.uSource.value.fromArray(entry.source);bounds={left:r.left,top:r.top+state().progress*h*RISE};proxy=hitProxy(l);uniforms.uMatrix.value.fromArray(l.matrix);uniforms.uScale.value=l.scale;uniforms.uOffset.value.fromArray(l.offset);if(!builds||wasMobile!==mobile)build();else{const a=anchorGeometry.getAttribute('aParam') as THREE.BufferAttribute;a.setXY(1,entry.uv[0],entry.uv[1]);a.needsUpdate=true}previousWidth=w;previousHeight=h;wake()}
- const pick=(x:number,y:number):MaterialHit|null=>proxy?.(x-bounds.left,y-bounds.top+state().progress*previousHeight*RISE,mobile?25:38)||null;
+ function wake(){if(disposed)return;if(document.hidden||!visible||state().paused){habitat?.reset();input.hover=0;input.tiltTarget=0;input.eventAt=-10000;hover=0;tilt=0;cancelAnimationFrame(raf);raf=0;last=0;return}if(!raf)raf=requestAnimationFrame(paint)}
+ function resize(){const r=host.getBoundingClientRect(),w=Math.max(1,r.width),h=Math.max(1,r.height);if(w===previousWidth&&h===previousHeight)return;const wasMobile=mobile;mobile=w<701;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,mobile?1.5:1.5));renderer.setSize(w,h,false);uniforms.uRatio.value=renderer.getPixelRatio();const l=galaxyLayout(w,h);layout=l;entry=createEntryPlan(w,h,l);uniforms.uSource.value.fromArray(entry.source);bounds={left:r.left,top:r.top+state().progress*h*RISE};proxy=hitProxy(l);uniforms.uMatrix.value.fromArray(l.matrix);uniforms.uScale.value=l.scale;uniforms.uOffset.value.fromArray(l.offset);if(!builds||wasMobile!==mobile){build();if(builds>1){prepare()}}else{const a=anchorGeometry.getAttribute('aParam') as THREE.BufferAttribute;a.setXY(1,entry.uv[0],entry.uv[1]);a.needsUpdate=true}previousWidth=w;previousHeight=h;wake()}
+ const pick=(x:number,y:number):MaterialHit|null=>{const px=x-bounds.left,py=y-bounds.top+state().progress*previousHeight*RISE;return habitat?habitat.pick(px,py,previousWidth,previousHeight,camera):proxy?.(px,py,mobile?25:38)||null};
  const unbind=bindMobiusInput(host,input,pick,()=>!disposed&&!document.hidden&&visible&&!state().paused&&!state().reduced&&state().progress<.28,wake);
  function loss(e:Event){e.preventDefault();onFallback()}
  const observer=new IntersectionObserver(es=>{visible=es[0].isIntersecting;wake()});observer.observe(host);const size=new ResizeObserver(resize);size.observe(host);document.addEventListener('visibilitychange',wake);canvas.addEventListener('webglcontextlost',loss);
  const gl=renderer.getContext(),debug=gl.getExtension('WEBGL_debug_renderer_info');
- (host as HTMLElement&{fieldSnapshot?:()=>unknown}).fieldSnapshot=()=>({renderer:'WebGLRenderer',disposed,cameraType:camera.type,frames,elapsed:time,travel,energy,progress:state().progress,velocity:state().velocity,input:{...input,hoverLevel:hover,tilt,eventLevel:uniforms.uEvent.value,eventPoint:eventPoint.toArray(),hoverPoint:hoverPoint.toArray()},interactionAnchors:layout?[.7,2.8,4.9].map(u=>({u,v:0,screen:project(mobiusPoint(u,0),layout)})):[],drawCalls:renderer.info.render.calls,particles:mobile?11002:24002,entryAnchors:entry?[entry.source,entry.mate].map(p=>new THREE.Vector3().fromArray(p).project(camera).toArray()):[],pixelRatio:renderer.getPixelRatio(),geometryBuilds:builds,geometryCount:renderer.info.memory.geometries,renderSubmissionMs:drawMs,submissionSamples:Array.from(costs.slice(0,Math.min(costIndex,240))),cameraPosition:camera.position.toArray(),gpu:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):'unavailable'});
- resize();renderer.compileAsync(scene,camera).then(()=>{if(!disposed){ready=true;wake()}}).catch(()=>{if(!disposed)onFallback()});return{wake,dispose(){disposed=true;unbind();cancelAnimationFrame(raf);observer.disconnect();size.disconnect();document.removeEventListener('visibilitychange',wake);canvas.removeEventListener('webglcontextlost',loss);resources.forEach(r=>r.dispose());scene.clear();renderer.dispose();renderer.forceContextLoss();delete(host as HTMLElement&{fieldSnapshot?:()=>unknown}).fieldSnapshot}};
+ (host as HTMLElement&{fieldSnapshot?:()=>unknown}).fieldSnapshot=()=>({renderer:'WebGLRenderer',habitat:habitat?.snapshot()??null,disposed,cameraType:camera.type,frames,elapsed:time,travel,energy,progress:state().progress,velocity:state().velocity,input:{...input,hoverLevel:hover,tilt,eventLevel:uniforms.uEvent.value,eventPoint:eventPoint.toArray(),hoverPoint:hoverPoint.toArray()},habitatAnchors:layout?[2.8,.65,1.65].map(u=>({u,v:0,screen:project(mobiusPoint(u,0),layout)})):[],interactionAnchors:layout?[.7,2.8,4.9].map(u=>({u,v:0,screen:project(mobiusPoint(u,0),layout)})):[],drawCalls:renderer.info.render.calls,particles:mobile?11002:24002,entryAnchors:entry?[entry.source,entry.mate].map(p=>new THREE.Vector3().fromArray(p).project(camera).toArray()):[],pixelRatio:renderer.getPixelRatio(),geometryBuilds:builds,geometryCount:renderer.info.memory.geometries,renderSubmissionMs:drawMs,submissionSamples:Array.from(costs.slice(0,Math.min(costIndex,240))),cameraPosition:camera.position.toArray(),gpu:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):'unavailable'});
+ function prepare(){const generation=builds;ready=false;Promise.all([habitat?.ready,renderer.compileAsync(scene,camera)]).then(()=>{if(!disposed&&generation===builds){renderer.render(scene,camera);habitat?.reset();ready=true;wake()}}).catch(()=>{if(!disposed&&generation===builds)onFallback()})}resize();prepare();return{wake,dispose(){disposed=true;unbind();cancelAnimationFrame(raf);observer.disconnect();size.disconnect();document.removeEventListener('visibilitychange',wake);canvas.removeEventListener('webglcontextlost',loss);habitat?.dispose();habitat=null;resources.forEach(r=>r.dispose());scene.clear();renderer.dispose();renderer.forceContextLoss();delete(host as HTMLElement&{fieldSnapshot?:()=>unknown}).fieldSnapshot}};
 }
 /** Honest static fallback: the same seeded particle coordinates, projected once on resize. */
 const stillCache=new WeakMap<HTMLCanvasElement,{w:number;h:number;l:GalaxyLayout;entry:EntryPlan;points:{g:ReturnType<typeof grains>[number];p:number[];near:number;alpha:number}[]}>();

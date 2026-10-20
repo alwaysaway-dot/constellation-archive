@@ -8,7 +8,7 @@ const source=await readFile(resolve(root,'src/content.ts'),'utf8');
 const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
 const {featuredSongs,otherSongs}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 if(featuredSongs.length!==10||otherSongs.length!==25)throw Error('Catalogue count changed; review the publication scope.');
-const required=new Set(['index.html','favicon.svg','identity/portrait.png','identity/wechat-qr.png',...featuredSongs.flatMap(s=>[s.art,s.audio]),...otherSongs.map(s=>s.preview)].map(p=>{if(!p||p.includes('..'))throw Error('Invalid resource');return p.replace(/^\//,'')}));
+const required=new Set(['index.html','materials/woodland-bark-v1.jpg','materials/woodland-moss-v1.jpg','favicon.svg','identity/portrait.png','identity/wechat-qr.png',...featuredSongs.flatMap(s=>[s.art,s.audio]),...otherSongs.map(s=>s.preview)].map(p=>{if(!p||p.includes('..'))throw Error('Invalid resource');return p.replace(/^\//,'')}));
 async function files(dir){let found=[];for(const e of await readdir(dir,{withFileTypes:true})){const p=resolve(dir,e.name);found.push(...(e.isDirectory()?await files(p):[p]));}return found;}
 // Preserve the source photo; override only the generated deployment copy.
 await copyFile(resolve(root,'deploy/assets/artwork/08-official.jpg'),resolve(dist,'artwork/08-official.jpg'));
@@ -25,7 +25,7 @@ for(const name of [...required].sort()){
  if(/\.(js|css|html|svg|json)$/.test(name)&&/\/Users\/|localhost:\d|127\.0\.0\.1|BEGIN (RSA |EC )?PRIVATE KEY|CLOUDFLARE_API_TOKEN\s*[:=]/.test(b.toString()))throw Error(`Private/development reference: ${name}`);
  entries.push({path:name,bytes:size,sha256:digest(b)});
 }
-const sourceFiles=[...await files(resolve(root,'src')),...await files(resolve(root,'scripts')),...await files(resolve(root,'deploy')), ...['package.json','package-lock.json','wrangler.jsonc','wrangler.field-preview.jsonc','wrangler.mobius-preview.jsonc','wrangler.mobius-v11-preview.jsonc','wrangler.vertical-lane-preview.jsonc','wrangler.river-source-preview.jsonc','wrangler.river-motion-preview.jsonc','wrangler-six-stage.jsonc','wrangler-along-ring.jsonc','wrangler-afterimage.jsonc','index.html','tsconfig.json'].map(p=>resolve(root,p))].sort();
+const sourceFiles=[...await files(resolve(root,'src')),...await files(resolve(root,'scripts')),...await files(resolve(root,'deploy')), ...['package.json','package-lock.json','wrangler.jsonc','wrangler.field-preview.jsonc','wrangler.mobius-preview.jsonc','wrangler.mobius-v11-preview.jsonc','wrangler.vertical-lane-preview.jsonc','wrangler.river-source-preview.jsonc','wrangler.river-motion-preview.jsonc','wrangler-six-stage.jsonc','wrangler-along-ring.jsonc','wrangler-afterimage.jsonc','wrangler-habitat.jsonc','index.html','tsconfig.json'].map(p=>resolve(root,p))].sort();
 const hashes=[];for(const p of sourceFiles)hashes.push({path:relative(root,p),sha256:digest(await readFile(p))});
 const version=digest(JSON.stringify(hashes));
 await mkdir(resolve(root,'work/cloudflare'),{recursive:true});
