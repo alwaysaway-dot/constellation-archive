@@ -1,4 +1,4 @@
-/* Song 01 only: layout and art remain sharp; decoration never receives input. */
+/* Shared featured decoration: layout and art remain sharp; decoration never receives input. */
 .late-reply .detail-hero{position:relative;isolation:isolate}
 .late-reply .detail-hero>div:not(.late-space){position:relative;z-index:1}
 .late-space,.late-reading{position:absolute;inset:0;pointer-events:none;user-select:none;z-index:0}
@@ -15,4 +15,4 @@
  .late-reading{width:140px;height:150px;right:-7vw;top:-12px;opacity:.65}
 }
 /* Keep a narrow-screen lyric sentence together without a single trailing glyph. */
-.late-reply .lyrics blockquote p{text-wrap:balance;word-break:normal}
+.late-reply[data-work-id="1"] .lyrics blockquote p{text-wrap:balance;word-break:normal}

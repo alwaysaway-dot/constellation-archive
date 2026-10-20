@@ -1,7 +1,7 @@
 import {useEffect,useRef} from 'react';
 import './late-reply.css';
 
-/** A local visual flag: removal leaves shared reading/playback/return behaviour intact. */
+/** Shared featured decoration; disabling leaves reading, playback and return behaviour intact. */
 export const LATE_REPLY_ENABLED=true;
 type Grain={x:number;y:number;u:number;r:number;a:number;silver:boolean};
 type Layer={base:HTMLCanvasElement;light:HTMLCanvasElement|null;ctx:CanvasRenderingContext2D;glow:CanvasRenderingContext2D|null;grains:Grain[];width:number;height:number;dpr:number;far:boolean};
