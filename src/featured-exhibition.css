@@ -53,4 +53,4 @@
  .featured-exhibition .origin p{font-size:15px;line-height:2}
 }
 /* Keep long Chinese lyric sentences readable without a lone trailing character. */
-.featured-exhibition[data-work-id="3"] .lyrics blockquote p{text-wrap:balance}
+.featured-exhibition[data-work-id="3"] .lyrics blockquote p{text-wrap:balance;word-break:keep-all;overflow-wrap:anywhere}
