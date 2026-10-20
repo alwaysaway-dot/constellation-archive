@@ -1,0 +1,16 @@
+/* Song 01 only: layout and art remain sharp; decoration never receives input. */
+.late-reply .detail-hero{position:relative;isolation:isolate}
+.late-reply .detail-hero>div:not(.late-space){position:relative;z-index:1}
+.late-space,.late-reading{position:absolute;inset:0;pointer-events:none;user-select:none;z-index:0}
+.reply-patch{position:absolute;pointer-events:none}
+.reply-patch canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.late-space .reply-near{width:55%;height:62%;left:-10%;bottom:-10%}
+.late-space .reply-far{width:54%;height:85%;right:-11%;top:-26%}
+.late-reply .lyrics{position:relative;isolation:isolate}
+.late-reading{inset:0 -5vw auto auto;width:200px;height:170px;z-index:-1;mask-image:linear-gradient(to left,#000,transparent 85%)}
+.late-reading .reply-far{inset:0}
+@media(max-width:700px){
+ .late-space .reply-near{width:115%;height:230px;left:-47%;bottom:150px}
+ .late-space .reply-far{width:78%;height:260px;right:-34%;top:-40px}
+ .late-reading{width:140px;height:150px;right:-7vw;top:-12px;opacity:.65}
+}

@@ -25,7 +25,7 @@ for(const name of [...required].sort()){
  if(/\.(js|css|html|svg|json)$/.test(name)&&/\/Users\/|localhost:\d|127\.0\.0\.1|BEGIN (RSA |EC )?PRIVATE KEY|CLOUDFLARE_API_TOKEN\s*[:=]/.test(b.toString()))throw Error(`Private/development reference: ${name}`);
  entries.push({path:name,bytes:size,sha256:digest(b)});
 }
-const sourceFiles=[...await files(resolve(root,'src')),...await files(resolve(root,'scripts')),...await files(resolve(root,'deploy')), ...['package.json','package-lock.json','wrangler.jsonc','wrangler.field-preview.jsonc','wrangler.mobius-preview.jsonc','wrangler.mobius-v11-preview.jsonc','wrangler.vertical-lane-preview.jsonc','wrangler.river-source-preview.jsonc','wrangler.river-motion-preview.jsonc','wrangler-six-stage.jsonc','wrangler-along-ring.jsonc','wrangler-afterimage.jsonc','index.html','tsconfig.json'].map(p=>resolve(root,p))].sort();
+const sourceFiles=[...await files(resolve(root,'src')),...await files(resolve(root,'scripts')),...await files(resolve(root,'deploy')), ...['package.json','package-lock.json','wrangler.jsonc','wrangler.field-preview.jsonc','wrangler.mobius-preview.jsonc','wrangler.mobius-v11-preview.jsonc','wrangler.vertical-lane-preview.jsonc','wrangler.river-source-preview.jsonc','wrangler.river-motion-preview.jsonc','wrangler-six-stage.jsonc','wrangler-along-ring.jsonc','wrangler-afterimage.jsonc','wrangler-late-reply.jsonc','index.html','tsconfig.json'].map(p=>resolve(root,p))].sort();
 const hashes=[];for(const p of sourceFiles)hashes.push({path:relative(root,p),sha256:digest(await readFile(p))});
 const version=digest(JSON.stringify(hashes));
 await mkdir(resolve(root,'work/cloudflare'),{recursive:true});
