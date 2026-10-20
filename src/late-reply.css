@@ -14,3 +14,5 @@
  .late-space .reply-far{width:78%;height:260px;right:-34%;top:-40px}
  .late-reading{width:140px;height:150px;right:-7vw;top:-12px;opacity:.65}
 }
+/* Keep a narrow-screen lyric sentence together without a single trailing glyph. */
+.late-reply .lyrics blockquote p{text-wrap:balance;word-break:normal}
