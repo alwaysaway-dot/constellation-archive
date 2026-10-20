@@ -24,7 +24,7 @@ import './vertical-lane.css';
 import './river-source.css';
 import './six-stage.css';
 import './ring-entry.css';
-import './afterimage.css';
+import './featured-exhibition.css';
 const Star=()=> <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 1v30M1 16h30M6 6l20 20M6 26L26 6" stroke="currentColor" strokeWidth=".7"/><circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth=".7"/></svg>;
 
 function route(){const h=location.hash.slice(1);if(h==='archive')return 'map';if(h==='albums'||h.startsWith('album/')){history.replaceState(null,'','#works');return 'works'}if(['map','works','about'].includes(h))return h;if(/^work\/[1-9]\d*$/.test(h)&&songById(Number(h.slice(5)))){if(songById(Number(h.slice(5)))!.featured)return h;history.replaceState(null,'','#works');return 'works'}return 'home'}
@@ -63,7 +63,7 @@ function App(){
 
  useEffect(()=>{const change=()=>document.documentElement.classList.toggle('page-hidden',document.hidden);document.addEventListener('visibilitychange',change);change();return()=>{document.removeEventListener('visibilitychange',change);document.documentElement.classList.remove('page-hidden')}},[]);
  useEffect(()=>{document.documentElement.dataset.motion=reduced?'reduced':'full';return()=>{delete document.documentElement.dataset.motion}},[reduced]);
- useEffect(()=>{if(!work||reduced||document.querySelector('.afterimage-exhibition'))return;const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in-view');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.editorial').forEach(el=>observer.observe(el));return()=>observer.disconnect()},[page,reduced]);
+ useEffect(()=>{if(!work||reduced||document.querySelector('.featured-exhibition'))return;const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in-view');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.editorial').forEach(el=>observer.observe(el));return()=>observer.disconnect()},[page,reduced]);
  useEffect(()=>()=>{if(transition.current)clearTimeout(transition.current)},[]);
  const enter=(id:number)=>{cancelTransition();pendingContext.current=journey?{id,to:'map',scroll:readScroll(),signal:id,catalogue:{...catalogueState}}:page==='works'?{id,to:'works',scroll:readScroll(),signal:null,catalogue:{...catalogueState}}:{...detailContext.current,id};setLastSignal(id);mapMemory.current.id=id;if(journey)mapMemory.current.scroll=window.scrollY;
   if(reduced||!journey){navigate('work/'+id);return}
