@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {visibleRange} from './visible-range';
 import {createEntryPlan,laneEntryCamera,entryState,entryPatch,type EntryPlan} from './ring-entry';
 import {grains} from './mobius-model';
 import {motifMotionGLSL,createPathAtlas,pathRow,PATH_ROWS,PATH_SAMPLES} from './motif-motion';
@@ -83,10 +84,10 @@ if(aKind>3.5&&aAnchor>=0.){
  const lineMaterial=new THREE.ShaderMaterial({uniforms,vertexShader:`attribute float aAlpha;uniform float uScroll,uPixel,uMotion,uFlow,uEnergy,uBirth,uRiver;uniform vec2 uSize;varying float vAlpha;void main(){vec3 p=position;
 float scale=1.-p.z/20.;gl_Position=projectionMatrix*modelViewMatrix*vec4((p.x-uSize.x*.5)*uPixel*scale,(uSize.y*.5-p.y+uScroll)*uPixel*scale,p.z,1.);vAlpha=aAlpha*(.7+pow(max(0.,sin(p.y*.018-uFlow*.5)),8.)*(.3+uEnergy*.4)*uMotion)*uRiver;}`,fragmentShader:'varying float vAlpha;void main(){gl_FragColor=vec4(.65,.75,.87,vAlpha);}',transparent:true,depthWrite:false,blending:THREE.AdditiveBlending});
  const lines=new THREE.LineSegments(lineGeometry,lineMaterial);lines.frustumCulled=false;scene.add(lines);
- let width=0,height=0,origin=0,total=0,scroll=0,velocity=0,lastScroll=0,scrollTime=performance.now(),elapsed=0,flow=0,frame=0,last=0,frames=0,builds=0,disposed=false,visible=true,submission=0;
- let entry:EntryPlan;let previousFocus=-1,ready=false,warmupMs=0;const pointer=new THREE.Vector2(-1000,-1000),samples:number[]=[];
- function measure(){const w=viewport.clientWidth,h=viewport.clientHeight;origin=host.getBoundingClientRect().top+readY();if(w===width&&h===height)return;width=w;height=h;const data=createLanePoints(w,h);total=data.layout.total;builds++;
-  entry=createEntryPlan(w,h);const all=[...data.points,...entryPatch(entry,grains(w<701?11000:24000))];
+ let width=0,height=0,total=0,scroll=0,velocity=0,lastScroll=0,scrollTime=performance.now(),elapsed=0,flow=0,frame=0,last=0,frames=0,builds=0,disposed=false,visible=true,submission=0;
+ let entry:EntryPlan,sortedY=new Float32Array(0),poseProgress=-1,poseReduced=false;let previousFocus=-1,ready=false,warmupMs=0;const pointer=new THREE.Vector2(-1000,-1000),samples:number[]=[];
+ function measure(){const w=viewport.clientWidth,h=viewport.clientHeight;if(w===width&&h===height)return;width=w;height=h;const data=createLanePoints(w,h);total=data.layout.total;builds++;
+  entry=createEntryPlan(w,h);const all=[...data.points,...entryPatch(entry,grains(w<701?11000:24000))].sort((a,b)=>a.y-b.y);sortedY=Float32Array.from(all,p=>p.y);poseProgress=-1;
   const attrs:{[key:string]:number[]}={position:[],aSize:[],aAlpha:[],aKind:[],aPhase:[],aAnchor:[],aPart:[],aRoute:[],aMotion:[]};
   for(const p of all){attrs.position.push(p.x,p.y,p.z);attrs.aSize.push(p.size);attrs.aAlpha.push(p.alpha);attrs.aKind.push(p.kind);attrs.aPhase.push(p.phase);attrs.aAnchor.push(p.anchor);attrs.aPart.push(p.part);attrs.aRoute.push(...(p.route||[0,0]));let radius=1;
    if(p.kind===4&&(p.anchor===4||p.anchor===5)){const scale=w<701?.90:1.10,dx=(p.x-data.layout.xs[p.anchor]*w)/scale,dy=(p.y-data.layout.start-p.anchor*data.layout.step)/scale;radius=p.anchor===4?Math.hypot(dx-p.part*31,(dy-p.part*13)/.75):Math.hypot(dx-30,(dy+9)/.68)}
@@ -98,10 +99,10 @@ float scale=1.-p.z/20.;gl_Position=projectionMatrix*modelViewMatrix*vec4((p.x-uS
   data.layout.xs.forEach((x,i)=>uniforms.uAnchors.value[i].set(x*w,data.layout.start+i*data.layout.step));camera.aspect=w/h;camera.updateProjectionMatrix();uniforms.uPixel.value=2*Math.tan(21*Math.PI/180)*20/h;uniforms.uSize.value.set(w,h);renderer.setPixelRatio(Math.min(devicePixelRatio,w<701?1.5:1.5));renderer.setSize(w,h,false);uniforms.uRatio.value=renderer.getPixelRatio();host.dataset.renderer='webgl';
  }
  function draw(now:number){frame=0;if(disposed||!ready||document.hidden||!visible||state().paused)return;const s=state(),interval=1000/60;if(!s.reduced&&now-last<interval-1){frame=requestAnimationFrame(draw);return}const dt=Math.min(.06,Math.max(.001,(now-last)/1000));last=now;if(!s.reduced)elapsed+=dt;
-  const j=journey(host);scroll=Math.min(readY()-origin,Math.max(0,total-height));
-  const pose=laneEntryCamera(entry,j.progress,s.reduced),v=entryState(j.progress,s.reduced);
+  const j=journey(host);scroll=Math.min(readY()-((j.origin??0)+j.span),Math.max(0,total-height));
+  const v=entryState(j.progress,s.reduced);
   uniforms.uFirst.value=v.first;uniforms.uBirth.value=v.rest;uniforms.uRiver.value=v.takeover;uniforms.uRetreat.value=j.progress;
-  camera.position.fromArray(pose.eye);camera.rotation.set(0,0,pose.roll);camera.updateMatrixWorld();
+  if(poseProgress!==j.progress||poseReduced!==s.reduced){const pose=laneEntryCamera(entry,j.progress,s.reduced);camera.position.fromArray(pose.eye);camera.rotation.set(0,0,pose.roll);camera.updateMatrixWorld();poseProgress=j.progress;poseReduced=s.reduced;}
   const actualScroll=scroll;scroll=j.progress<1?0:scroll;
 
   const decay=Math.exp(-Math.max(0,now-scrollTime)/190);uniforms.uEnergy.value+=((s.reduced?0:Math.min(1,Math.abs(velocity))*decay)-uniforms.uEnergy.value)*(1-Math.exp(-dt*9));
@@ -115,6 +116,8 @@ float scale=1.-p.z/20.;gl_Position=projectionMatrix*modelViewMatrix*vec4((p.x-uS
    uniforms.uEcho.value[i]+=(target-uniforms.uEcho.value[i])*(s.reduced?1:1-Math.exp(-dt*2.8));
   }
   uniforms.uSelected.value=s.selected;uniforms.uSelect.value+=(Number(s.selected>=0)-uniforms.uSelect.value)*(s.reduced?1:1-Math.exp(-dt*16));uniforms.uPointer.value.lerp(pointer,1-Math.exp(-dt*12));
+  // Culling is only applied in the stable camera. The approach keeps its entire matched patch.
+  if(j.progress>=1){const [start,count]=visibleRange(sortedY,scroll,height);geometry.setDrawRange(start,count)}else geometry.setDrawRange(0,sortedY.length);
   lines.visible=v.takeover>0;const t=performance.now();renderer.render(scene,camera);scroll=actualScroll;submission=performance.now()-t;frames++;samples.push(submission);if(samples.length>240)samples.shift();if(!s.reduced)frame=requestAnimationFrame(draw);
  }
  function wake(){if(disposed)return;if(state().paused||document.hidden||!visible){cancelAnimationFrame(frame);frame=0;return}if(!frame){last=performance.now()-34;frame=requestAnimationFrame(draw)}}
@@ -124,14 +127,14 @@ float scale=1.-p.z/20.;gl_Position=projectionMatrix*modelViewMatrix*vec4((p.x-uS
  function leave(){pointer.set(-1000,-1000);wake()}
  function lost(e:Event){e.preventDefault();fail()}
  const observer=new ResizeObserver(resize);observer.observe(viewport);const intersection=new IntersectionObserver(e=>{visible=e[0].isIntersecting;wake()});intersection.observe(viewport);
- window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',resize);host.addEventListener('pointermove',move,{passive:true});host.addEventListener('pointerleave',leave);document.addEventListener('visibilitychange',wake);canvas.addEventListener('webglcontextlost',lost);measure();renderer.compileAsync(scene,camera).then(()=>{if(!disposed){
+ window.addEventListener('scroll',onScroll,{passive:true});host.addEventListener('pointermove',move,{passive:true});host.addEventListener('pointerleave',leave);document.addEventListener('visibilitychange',wake);canvas.addEventListener('webglcontextlost',lost);measure();renderer.compileAsync(scene,camera).then(()=>{if(!disposed){
   // Compile alone does not guarantee driver pipeline/buffer readiness. Warm the actual
   // drawing target once with zero opacity before the scroll handoff can expose it.
   const start=performance.now();renderer.render(scene,camera);renderer.clear();warmupMs=performance.now()-start;
   ready=true;wake()
  }}).catch(fail);
- (host as HTMLElement&{gravitySnapshot?:()=>unknown}).gravitySnapshot=()=>({renderer:'WebGLRenderer',ready,warmupMs,pathTextureBytes:paths.image.data!.byteLength,cameraType:camera.type,gpu,frames,elapsed,disposed,visible,paused:state().paused,reduced:state().reduced,focused:state().focus+1,life:[...uniforms.uLife.value],focusLevels:[...uniforms.uFocus.value],echoLevels:[...uniforms.uEcho.value],selected:state().selected,progress:journey(host).progress,first:uniforms.uFirst.value,entryAnchors:[0,1].map(i=>{const a=uniforms.uAnchors.value[0],k=width<701?.9:1.1,z=i?1:.5,x=a.x+i*36*k,y=a.y+i*17*k,pixel=uniforms.uPixel.value;return new THREE.Vector3((x-width/2)*pixel*(1-z/20),(height/2-y+uniforms.uScroll.value)*pixel*(1-z/20),z).project(camera).toArray()}),cameraPosition:camera.position.toArray(),river:uniforms.uRiver.value,retreat:uniforms.uRetreat.value,birth:uniforms.uBirth.value,scroll,energy:uniforms.uEnergy.value,drawCalls:renderer.info.render.calls,particles:geometry.getAttribute('position').count,depths:LANE_DEPTH,geometryBuilds:builds,pixelRatio:renderer.getPixelRatio(),renderSubmissionMs:submission,submissionSamples:samples.slice()});
- return{wake,dispose(){if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer.disconnect();intersection.disconnect();window.removeEventListener('scroll',onScroll);window.removeEventListener('resize',resize);host.removeEventListener('pointermove',move);host.removeEventListener('pointerleave',leave);document.removeEventListener('visibilitychange',wake);canvas.removeEventListener('webglcontextlost',lost);geometry.dispose();lineGeometry.dispose();material.dispose();lineMaterial.dispose();paths.dispose();renderer.dispose();renderer.forceContextLoss();host.dataset.disposed='true'}};
+ (host as HTMLElement&{gravitySnapshot?:()=>unknown}).gravitySnapshot=()=>({renderer:'WebGLRenderer',ready,warmupMs,pathTextureBytes:paths.image.data!.byteLength,cameraType:camera.type,gpu,frames,elapsed,disposed,visible,paused:state().paused,reduced:state().reduced,focused:state().focus+1,life:[...uniforms.uLife.value],focusLevels:[...uniforms.uFocus.value],echoLevels:[...uniforms.uEcho.value],selected:state().selected,progress:journey(host).progress,first:uniforms.uFirst.value,entryAnchors:[0,1].map(i=>{const a=uniforms.uAnchors.value[0],k=width<701?.9:1.1,z=i?1:.5,x=a.x+i*36*k,y=a.y+i*17*k,pixel=uniforms.uPixel.value;return new THREE.Vector3((x-width/2)*pixel*(1-z/20),(height/2-y+uniforms.uScroll.value)*pixel*(1-z/20),z).project(camera).toArray()}),cameraPosition:camera.position.toArray(),river:uniforms.uRiver.value,retreat:uniforms.uRetreat.value,birth:uniforms.uBirth.value,scroll,energy:uniforms.uEnergy.value,drawCalls:renderer.info.render.calls,particles:geometry.getAttribute('position').count,submittedParticles:geometry.drawRange.count,depths:LANE_DEPTH,geometryBuilds:builds,pixelRatio:renderer.getPixelRatio(),renderSubmissionMs:submission,submissionSamples:samples.slice()});
+ return{wake,dispose(){if(disposed)return;disposed=true;cancelAnimationFrame(frame);observer.disconnect();intersection.disconnect();window.removeEventListener('scroll',onScroll);host.removeEventListener('pointermove',move);host.removeEventListener('pointerleave',leave);document.removeEventListener('visibilitychange',wake);canvas.removeEventListener('webglcontextlost',lost);geometry.dispose();lineGeometry.dispose();material.dispose();lineMaterial.dispose();paths.dispose();renderer.dispose();renderer.forceContextLoss();host.dataset.disposed='true'}};
 }
 function dot(ctx:CanvasRenderingContext2D,x:number,y:number,r:number,color:string,alpha:number){ctx.globalAlpha=clamp(alpha);ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
 export function drawLaneStill(canvas:HTMLCanvasElement,host:HTMLElement){

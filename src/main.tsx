@@ -25,6 +25,7 @@ import './river-source.css';
 import './six-stage.css';
 import './ring-entry.css';
 import './featured-exhibition.css';
+import './review-round2.css';
 const Star=()=> <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 1v30M1 16h30M6 6l20 20M6 26L26 6" stroke="currentColor" strokeWidth=".7"/><circle cx="16" cy="16" r="5" stroke="currentColor" strokeWidth=".7"/></svg>;
 
 function route(){const h=location.hash.slice(1);if(h==='archive')return 'map';if(h==='albums'||h.startsWith('album/')){history.replaceState(null,'','#works');return 'works'}if(['map','works','about'].includes(h))return h;if(/^work\/[1-9]\d*$/.test(h)&&songById(Number(h.slice(5)))){if(songById(Number(h.slice(5)))!.featured)return h;history.replaceState(null,'','#works');return 'works'}return 'home'}
@@ -40,6 +41,7 @@ function App(){
  // One audio instance survives navigation; detail visuals sample only while visible.
  const player=usePlayer(),transition=useRef<ReturnType<typeof setTimeout>|null>(null),main=useRef<HTMLElement>(null),initial=useRef(true);
  const active=page.startsWith('work/')?Number(page.split('/')[1]):null;const work=active?songById(active):null;const detail=active===4;const playingWork=songById(player.trackId)!;
+ useEffect(()=>{document.title=work?`${work.title} — 阿尾｜星图档案馆`:`${page==='works'?'作品档案':page==='about'?'关于阿尾':journey&&atMap?'星图':'阿尾'}｜星图档案馆`},[work,page,journey,atMap]);
  const miniRef=useRef<HTMLElement>(null);
  const mainPlayerVisible=useMainPlayerVisibility(active,miniRef);
  const miniVisible=player.started&&!player.minimized&&playingWork.featured&&(active!==player.trackId||!mainPlayerVisible);
@@ -65,7 +67,7 @@ function App(){
  useEffect(()=>{document.documentElement.dataset.motion=reduced?'reduced':'full';return()=>{delete document.documentElement.dataset.motion}},[reduced]);
  useEffect(()=>{if(!work||reduced||document.querySelector('.featured-exhibition'))return;const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in-view');observer.unobserve(e.target)}}),{threshold:.12});document.querySelectorAll('.editorial').forEach(el=>observer.observe(el));return()=>observer.disconnect()},[page,reduced]);
  useEffect(()=>()=>{if(transition.current)clearTimeout(transition.current)},[]);
- const enter=(id:number)=>{cancelTransition();pendingContext.current=journey?{id,to:'map',scroll:readScroll(),signal:id,catalogue:{...catalogueState}}:page==='works'?{id,to:'works',scroll:readScroll(),signal:null,catalogue:{...catalogueState}}:{...detailContext.current,id};setLastSignal(id);mapMemory.current.id=id;if(journey)mapMemory.current.scroll=window.scrollY;
+ const enter=(id:number,fromNext=false)=>{cancelTransition();if(fromNext)positionsMemory.current['work/'+id]=0;pendingContext.current=journey?{id,to:'map',scroll:readScroll(),signal:id,catalogue:{...catalogueState}}:page==='works'?{id,to:'works',scroll:readScroll(),signal:null,catalogue:{...catalogueState}}:{...detailContext.current,id};setLastSignal(id);mapMemory.current.id=id;if(journey)mapMemory.current.scroll=window.scrollY;
   if(reduced||!journey){navigate('work/'+id);return}
   setSelected(id);transition.current=setTimeout(()=>navigate('work/'+id),260);
  };
@@ -83,7 +85,7 @@ function App(){
  {page==='works'&&<CataloguePages enter={enter} player={player} state={catalogueState} onChange={setCatalogueState}/>}
  </main>
  {!journey&&<footer className="footer"><span>阿尾 <span className="subtle">alwaysaway</span></span><span className="subtle">星图档案馆 / Constellation Archive</span><button className="footer-about" onClick={()=>navigate('about')}>关于与联系</button></footer>}
- {miniVisible&&<aside ref={miniRef} className="mini-player" aria-label="持续播放控制"><img src={playingWork.art} alt=""/><button className="mini-title" onClick={()=>enter(player.trackId)}><span className="mono">{player.playing?'正在播放':'已暂停'} / {featuredNumber(player.trackId)?String(featuredNumber(player.trackId)).padStart(2,'0'):'作品档案'}</span><strong>{playingWork.title}</strong></button><span className="mini-time mono">{format(player.time)} / {format(player.duration)}</span><input aria-label="迷你播放器进度" type="range" min="0" max={player.duration} step="0.1" value={player.time} disabled={player.duration<=0} onChange={e=>player.seek(Number(e.target.value))}/><button className={`mini-play orbit-play ${player.playing?'is-playing':''}`} onClick={()=>player.toggle()} aria-label={player.playing?'暂停':'继续播放'}><Play playing={player.playing}/></button><button className="mini-close" aria-label={player.playing?'暂停并收起播放器':'收起播放器'} title={player.playing?'暂停并收起':'收起播放器'} onClick={()=>{player.minimize();main.current?.focus({preventScroll:true})}}><Icon kind="close"/></button></aside>}
+ {miniVisible&&<aside ref={miniRef} className="mini-player" aria-label="持续播放控制"><img src={playingWork.art} alt=""/><button className="mini-title" onClick={()=>enter(player.trackId)}><span className="mono">{player.error?'播放失败':player.playing?'正在播放':player.duration>0&&player.time>=player.duration-.1?'播放结束':'已暂停'} / {featuredNumber(player.trackId)?String(featuredNumber(player.trackId)).padStart(2,'0'):'作品档案'}</span><strong>{playingWork.title}</strong></button><span className="mini-time mono">{format(player.time)} / {format(player.duration)}</span><input aria-label="迷你播放器进度" aria-valuetext={`${format(player.time)}，共 ${format(player.duration)}`} type="range" min="0" max={player.duration} step="0.1" value={player.time} disabled={player.duration<=0} onChange={e=>player.seek(Number(e.target.value))}/><button className={`mini-play orbit-play ${player.playing?'is-playing':''}`} onClick={()=>player.toggle()} aria-label={player.playing?'暂停':'继续播放'}><Play playing={player.playing}/></button><button className="mini-close" aria-label={player.playing?'暂停并收起播放器':'收起播放器'} title={player.playing?'暂停并收起':'收起播放器'} onClick={()=>{player.minimize();main.current?.focus({preventScroll:true})}}><Icon kind="close"/></button></aside>}
  {player.error&&playingWork.featured&&active!==player.trackId&&<div className="error" role="alert">{player.error}<button onClick={()=>player.play()}>重试播放</button></div>}
  </div>
 }

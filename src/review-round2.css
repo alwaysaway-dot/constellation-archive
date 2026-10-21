@@ -1,0 +1,46 @@
+/* Shared usability polish; no change to the galaxy geometry or artwork. */
+@media(min-width:901px){.header .menu-toggle{display:none}.header .desktop-nav{display:flex;margin-right:0}}
+@media(max-width:900px){.header .desktop-nav{display:none}.header .menu-toggle{display:grid}}
+.header .desktop-nav button{font-size:14px;min-height:44px;color:#aebbc7}
+.home-identity{font:13px/1.8 Arial,"PingFang SC",sans-serif;letter-spacing:.08em;color:#9ba8b3;margin-top:14px}
+.featured-exhibition .genre{font-size:14px;line-height:1.65;color:#a1afbc;margin-top:0}
+.featured-exhibition .album-attribution{margin-top:5px}
+.featured-exhibition .listen{margin-top:20px;padding-top:12px}
+.featured-exhibition .listen .listen-controls{min-height:86px;padding:8px 0;margin:4px 0}
+.featured-exhibition .listen-bottom{margin-top:4px;gap:12px;line-height:1.6;color:#a6b5c3}
+.featured-exhibition .listen-bottom>span:last-child{font-size:12px;flex-shrink:0;color:#a0aebb}
+.listen input[type=range],.preview-listen input[type=range],.mini-player input[type=range]{height:24px;margin:0;background:linear-gradient(#778da755,#778da755) center/100% 2px no-repeat;touch-action:pan-y}
+.listen input[type=range]:focus-visible,.preview-listen input[type=range]:focus-visible,.mini-player input[type=range]:focus-visible{outline:1px solid #cedbe5;outline-offset:3px}
+.listen input[type=range]::-webkit-slider-thumb,.preview-listen input[type=range]::-webkit-slider-thumb{width:12px;height:12px;box-shadow:none}
+.featured-exhibition .detail-end{display:flex;flex-direction:column;align-items:flex-start;gap:28px;padding:26px 0 48px}
+.detail-next{display:flex;flex-direction:column;gap:10px;text-align:left;max-width:100%;padding:8px 0;min-height:44px}
+.detail-next small{font:12px/1.5 var(--mono);color:#a5b4c2}
+.detail-next>span{display:flex;align-items:center;gap:18px;font:22px/1.5 var(--serif);overflow-wrap:anywhere}
+.detail-next:hover{color:#eef3f6}
+.quiet-empty .text-button{min-height:44px;margin-right:24px;font-size:14px}
+.catalogue-page .work-row{display:grid;grid-template-columns:32px minmax(0,1fr) 80px 32px;column-gap:18px;transform:none;transition:border-color .18s,background-color .18s;border-bottom-color:#b7cdd923}
+.catalogue-page .work-name{min-width:0;margin:0}
+.catalogue-page .work-name strong{font-size:18px;line-height:1.6;overflow-wrap:anywhere;word-break:normal}
+.catalogue-page .work-name small{font-size:12px;line-height:1.6;color:#a0afbd;margin-top:4px}
+.catalogue-page .work-kind{font-size:12px;color:#9cadba;text-align:right}
+.catalogue-page .work-index{display:block;font-size:12px;color:#9cadba}
+.catalogue-page .work-row:not(:has(.work-kind)){grid-template-columns:32px minmax(0,1fr) 32px}
+.catalogue-page .work-row:hover{transform:none;background:#b0c6da05;border-bottom-color:#b7cdd94f}
+.catalogue-page .index-arrow{justify-self:end;margin:0;transform:none;transition:color .18s}
+.catalogue-page .work-row:hover .index-arrow{transform:none}
+.overlay-close,.drawer-close,.veil-close,.lane-index .overlay-close,.qr-dialog .overlay-close{display:grid;place-items:center;width:44px;height:44px;min-width:44px;min-height:44px;padding:11px;color:#c0cdd7;border:0;background:none;box-shadow:none}
+.overlay-close .line-icon{width:22px;height:22px}
+.overlay-close:hover{color:#fff;background:#b1c8d30c}
+.overlay-close:active{background:#b1c8d31a}
+.overlay-close:focus-visible,.detail-next:focus-visible,.work-row:focus-visible{outline:1px solid #c8dae6;outline-offset:4px}
+@media(max-width:700px){
+ .home-identity{font-size:12px;margin-top:10px}
+ .featured-exhibition .genre{font-size:13px}
+ .featured-exhibition .listen{margin-top:0;padding-top:10px}
+ .featured-exhibition .listen .listen-controls{min-height:80px;padding:8px 0;margin:3px 0}
+ .featured-exhibition .listen-bottom{font-size:12px;flex-wrap:wrap}
+ .detail-next>span{font-size:20px}
+ .catalogue-page .work-row{grid-template-columns:24px minmax(0,1fr) 58px 22px;column-gap:8px}
+ .catalogue-page .work-row:not(:has(.work-kind)){grid-template-columns:24px minmax(0,1fr) 22px}
+ .catalogue-page .work-name strong{font-size:17px}.catalogue-page .work-kind{font-size:11px}
+}

@@ -1,4 +1,5 @@
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
+import {readJourney} from './river-handoff';
 import {featuredSongs} from './content';
 import {Icon} from './Icons';
 import {lockPageScroll} from './lockPageScroll';
@@ -13,15 +14,15 @@ export function VerticalStarMap(p:Props){
  state.current={reduced:p.reduced,paused:p.paused||indexOpen,focus:focus.current,selected:featuredSongs.findIndex(s=>s.id===p.selected),playing:p.playing?featuredSongs.findIndex(s=>s.id===p.playingId):-1};
  useEffect(()=>{let alive=true;const fail=()=>{if(alive){setFallback(true);runtime.current?.dispose();runtime.current=null;root.current!.dataset.renderer='fallback'}};import('./VerticalLaneRenderer').then(({createVerticalLane})=>{if(!alive)return;try{runtime.current=createVerticalLane(root.current!,canvas.current!,()=>state.current,fail)}catch{fail()}}).catch(fail);return()=>{alive=false;runtime.current?.dispose();runtime.current=null}},[]);
  useEffect(()=>{if(!fallback)return;let alive=true,observer:ResizeObserver|undefined,cleanup:(()=>void)|undefined;import('./VerticalLaneRenderer').then(({drawLaneStill,createBridgeStill})=>{if(!alive)return;const draw=()=>drawLaneStill(still.current!,root.current!);draw();cleanup=createBridgeStill(bridgeStill.current!,root.current!);observer=new ResizeObserver(draw);observer.observe(root.current!)});return()=>{alive=false;observer?.disconnect();cleanup?.()}},[fallback]);
- useEffect(()=>{runtime.current?.wake()},[p.reduced,p.paused,p.selected,p.playing,p.playingId,current,indexOpen]);
+ useEffect(()=>{runtime.current?.wake();root.current?.dispatchEvent(new Event('lane-focus'))},[p.reduced,p.paused,p.selected,p.playing,p.playingId,current,indexOpen]);
  useLayoutEffect(()=>{
-  const el=root.current!,buttons=Array.from(el.querySelectorAll<HTMLButtonElement>('[data-signal]'));let raf=0,origin=0,height=0,ys:number[]=[];
+  const el=root.current!,buttons=Array.from(el.querySelectorAll<HTMLButtonElement>('[data-signal]'));let raf=0,height=0,lastFocus=-1,lastScrolled=false,ys:number[]=[];
   const read=()=>document.body.style.position==='fixed'?-(parseFloat(document.body.style.top)||0):scrollY;
-  const measure=()=>{origin=el.getBoundingClientRect().top+read();height=el.querySelector<HTMLElement>('.gravity-viewport')!.clientHeight;ys=buttons.map(b=>b.offsetTop)};
-  const update=()=>{raf=0;if(state.current.paused)return;const scroll=read()-origin;let next=focusIndex(ys,scroll,height,focus.current);if(state.current.selected>=0)next=state.current.selected;else if(hover.current>=0&&ys[hover.current]-scroll>80&&ys[hover.current]-scroll<height-80)next=hover.current;
-   focus.current=next;p.memory.focus=next;state.current.focus=next;buttons.forEach((b,i)=>b.dataset.focused=String(i===next));el.dataset.focused=String(next+1);el.dataset.scrolled=String(scroll>100);setCurrent(c=>c===next?c:next);runtime.current?.wake()};
+  const measure=()=>{height=el.querySelector<HTMLElement>('.gravity-viewport')!.clientHeight;ys=buttons.map(b=>b.offsetTop)};
+  const update=()=>{raf=0;if(state.current.paused)return;const j=readJourney(el),scroll=read()-((j.origin??0)+j.span);let next=focusIndex(ys,scroll,height,focus.current);if(state.current.selected>=0)next=state.current.selected;else if(hover.current>=0&&ys[hover.current]-scroll>80&&ys[hover.current]-scroll<height-80)next=hover.current;
+   focus.current=next;p.memory.focus=next;state.current.focus=next;if(next!==lastFocus){buttons.forEach((b,i)=>b.dataset.focused=String(i===next));el.dataset.focused=String(next+1);setCurrent(next);lastFocus=next}if((scroll>100)!==lastScrolled){lastScrolled=scroll>100;el.dataset.scrolled=String(lastScrolled)}runtime.current?.wake()};
   const request=()=>{if(!raf)raf=requestAnimationFrame(update)};const resize=()=>{measure();request()};measure();update();const observer=new ResizeObserver(resize);observer.observe(el);window.addEventListener('scroll',request,{passive:true});window.addEventListener('resize',resize);el.addEventListener('lane-focus',request);return()=>{cancelAnimationFrame(raf);observer.disconnect();window.removeEventListener('scroll',request);window.removeEventListener('resize',resize);el.removeEventListener('lane-focus',request)};
- },[p.memory,p.paused,indexOpen]);
+ },[p.memory]);
  const highlight=(i:number)=>{hover.current=i;root.current?.dispatchEvent(new Event('lane-focus'))};
  const locate=(i:number,keyboard=false)=>{const b=root.current?.querySelector<HTMLButtonElement>(`[data-order="${i}"]`);if(!b)return;const y=b.getBoundingClientRect().top+scrollY-innerHeight*.43;window.scrollTo({top:Math.max(root.current!.getBoundingClientRect().top+scrollY,y),behavior:p.reduced||keyboard?'instant':'smooth'});if(!keyboard)b.focus({preventScroll:true})};
  useEffect(()=>{if(!indexOpen)return;const d=dialog.current!,unlock=lockPageScroll();d.showModal();const handle=(e:KeyboardEvent)=>{if(e.key==='Escape'){e.preventDefault();setIndexOpen(false)}};d.addEventListener('keydown',handle);return()=>{d.removeEventListener('keydown',handle);d.close();unlock();indexButton.current?.focus({preventScroll:true})}},[indexOpen]);
