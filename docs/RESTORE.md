@@ -2,11 +2,10 @@
 
 ## 独立克隆
 
-使用拥有私有仓库权限的 GitHub 账户登录，不索取或在文件中保存明文 Token。
+仓库现已公开，克隆无需登录。推送修改仍需要相应权限，不在文件中保存明文 Token。
 
 ```sh
-gh auth login
-gh repo clone alwaysaway-dot/constellation-archive constellation-archive-restored
+git clone https://github.com/alwaysaway-dot/constellation-archive.git constellation-archive-restored
 cd constellation-archive-restored
 git switch --detach archive-2026-10-24
 npm ci
