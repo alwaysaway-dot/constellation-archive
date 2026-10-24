@@ -1,3 +1,4 @@
+node_modules
 node_modules/
 dist/
 *.tsbuildinfo
@@ -8,3 +9,13 @@ dist/
 .dev.vars*
 work/
 outputs/
+
+# Local authentication, diagnostics and rebuildable output
+!.env.example
+*.log
+build/
+coverage/
+.cache/
+.npm/
+*.pem
+*.key

@@ -1,0 +1,310 @@
+{
+  "date": "2026-10-24",
+  "assets": [
+    {
+      "path": "deploy/assets/artwork/08-official.jpg",
+      "bytes": 1166856,
+      "sha256": "816109001d5ccbee3521c0aa32597b46e12e4558a8aedc0abaedd01541566545"
+    },
+    {
+      "path": "design-references/field-confluence-approved.png",
+      "bytes": 2365278,
+      "sha256": "2d15629f9ec6c73341b2687e6a668c4ec97d1df9cbbaf4038ca1ecb9031d7cc6"
+    },
+    {
+      "path": "design-references/mobius-ab.png",
+      "bytes": 2355741,
+      "sha256": "24ecba9e581406e5894621181eff92900d0274cd4b2bd97fa2841b14e2fdeeae"
+    },
+    {
+      "path": "public/artwork/01-official.png",
+      "bytes": 2824393,
+      "sha256": "e300bf5c919846cd2e27a5e06793be35dfd135c051d00a5a0ea1a83cabb97780"
+    },
+    {
+      "path": "public/artwork/01.svg",
+      "bytes": 12493,
+      "sha256": "97376c52b729ddee279b2e2d09b8b2beb01ddb10a02146dc68f29630fdb6174b"
+    },
+    {
+      "path": "public/artwork/02-official.png",
+      "bytes": 2204564,
+      "sha256": "3d398b7df2a7e5783fc3a5fa041bbb8e38064fa64ae7ea6d7182f1dbc9d26af6"
+    },
+    {
+      "path": "public/artwork/02.svg",
+      "bytes": 11850,
+      "sha256": "7c439e53c68dd25259e116de702177b1f8e7261c5ce280e61894b18a096e9319"
+    },
+    {
+      "path": "public/artwork/03-official.png",
+      "bytes": 2751950,
+      "sha256": "bdfd59f86f2349da0a73bc8e494927cc9c7ed684506d907b0bd1fd9f4be368d5"
+    },
+    {
+      "path": "public/artwork/03.svg",
+      "bytes": 119876,
+      "sha256": "795b848192a027a0f13cc18de24eab3115880e07e73a366017191c62ac0ccc9e"
+    },
+    {
+      "path": "public/artwork/04-official.png",
+      "bytes": 3485595,
+      "sha256": "0bf60b9f9858fd9e206fe901dbc65f7f60b88cb4b59038479519ba3d4c622605"
+    },
+    {
+      "path": "public/artwork/04.svg",
+      "bytes": 4121,
+      "sha256": "d77d3d16374a1a43f183f0758628c7d954b75834e33e63a5dcef7f162160a4a6"
+    },
+    {
+      "path": "public/artwork/05-official.png",
+      "bytes": 2364030,
+      "sha256": "3fb29db05c4a1868f286aa3d81e7a5099ddf6766035887a009752267fbb031af"
+    },
+    {
+      "path": "public/artwork/05.svg",
+      "bytes": 66605,
+      "sha256": "aaa1501f3f3d31d8f07bb07c399821b71c57a2b358c8d58cf205c4064df323b5"
+    },
+    {
+      "path": "public/artwork/06-official.png",
+      "bytes": 2292244,
+      "sha256": "db11f7e24ae6cc687c166ab2b431efdcf65369f3e9f032222f726ffcf32bab51"
+    },
+    {
+      "path": "public/artwork/06.svg",
+      "bytes": 8462,
+      "sha256": "f19de1b7f445421bbc71a6d938f9e959a5395e3c8ff5c09ecc513861389dcaf2"
+    },
+    {
+      "path": "public/artwork/07-official.png",
+      "bytes": 2170806,
+      "sha256": "e3e2adcd622d59e962b26dbbd64c25c1fd219ae3c4bbf6e96b386373a450d8f5"
+    },
+    {
+      "path": "public/artwork/07.svg",
+      "bytes": 5082,
+      "sha256": "d045d46569e150bdac09083dd9cf6e09499ad7066379854af956c4469b543b00"
+    },
+    {
+      "path": "public/artwork/08-official.jpg",
+      "bytes": 30749861,
+      "sha256": "dd3cf86d91cd6ba834502c7432c60a59b259f5161602a1e7106bdf1463d8666a"
+    },
+    {
+      "path": "public/artwork/08.svg",
+      "bytes": 2653,
+      "sha256": "1639e59cb7dba04dd05f2a9b621ab50e6f6d8059174d4ff5bf2e77a6a3c34a75"
+    },
+    {
+      "path": "public/artwork/09-official.png",
+      "bytes": 2728890,
+      "sha256": "14be2d2b52aa64c6ca455e3c7f51a612b41c5df4796a23b7a1b02c0e69c9ea55"
+    },
+    {
+      "path": "public/artwork/09.svg",
+      "bytes": 44721,
+      "sha256": "06c77886cb2540932013a1b932abb18b71c497888fe9b137f248fbf84cb0f2ad"
+    },
+    {
+      "path": "public/artwork/10.svg",
+      "bytes": 2672,
+      "sha256": "ae83de799b6573a20f411690552a37b55d2ec8f923362d152c85ca7633b282db"
+    },
+    {
+      "path": "public/artwork/chikina-official.png",
+      "bytes": 3928960,
+      "sha256": "55bc88f3c743a64a8e1311b45aa3376d3791d41b547e63a413a1b43355796129"
+    },
+    {
+      "path": "public/audio/a-violet-afterglow.mp3",
+      "bytes": 6913773,
+      "sha256": "b47fe5ad80f85c49a5fda859dfb447639a6e696b7b58f6a4ce29cda59e7687bc"
+    },
+    {
+      "path": "public/audio/afterimage.mp3",
+      "bytes": 4349421,
+      "sha256": "bc16aa21e22e688fc014fee55241af8b4a22d7ab70a866ad94da921b85b11a5c"
+    },
+    {
+      "path": "public/audio/almost-there.mp3",
+      "bytes": 12826605,
+      "sha256": "f144bbfa2f4a4eb4cdaeb85e41482fed8b639fa00c0e1bb267aa7f48bcb61557"
+    },
+    {
+      "path": "public/audio/chikina.mp3",
+      "bytes": 8954541,
+      "sha256": "09bc0b868db09159d7543b4438cde7488cb601aa6089ad78ad442a8f7c1cc328"
+    },
+    {
+      "path": "public/audio/greenwich.mp3",
+      "bytes": 7584813,
+      "sha256": "0902cc99d140d08be9f821163c4d4a524e0a6b3cba905bc1f843ad9a73b9c554"
+    },
+    {
+      "path": "public/audio/hallway.mp3",
+      "bytes": 7153389,
+      "sha256": "ac7b2b10127fa64b7fc549b285a32b7de514b177ee41b17731ff2461cc96c8d4"
+    },
+    {
+      "path": "public/audio/meng-bu-shi-ren-lao.mp3",
+      "bytes": 6241005,
+      "sha256": "fe951fc8da04b7dac3df8093c53fbc3b3dbe870a56e930679fa01ebdf6dccf33"
+    },
+    {
+      "path": "public/audio/minority-of-one.mp3",
+      "bytes": 5321709,
+      "sha256": "607cb88399c8fd6c196ffa7058864ba96bec38210f83e8c66453daab6bab06ba"
+    },
+    {
+      "path": "public/audio/previews/preview-10.mp3",
+      "bytes": 721197,
+      "sha256": "8302c010068725d1cc1df919a4717086e4c692bc38c6d73db49ece942ddeb430"
+    },
+    {
+      "path": "public/audio/previews/preview-12.mp3",
+      "bytes": 721197,
+      "sha256": "dd180d36be0daddd062926192bcf166efd26e5e98c151146fd3523c5aaa1cfc2"
+    },
+    {
+      "path": "public/audio/previews/preview-14.mp3",
+      "bytes": 721197,
+      "sha256": "7b484ceabbeedd3f2c7553d19825cc52dae60867fdeccced0775f8d0389e667a"
+    },
+    {
+      "path": "public/audio/previews/preview-16.mp3",
+      "bytes": 721197,
+      "sha256": "be18d4e64f6021ae1654ae9d9a00da6272096ac30820d9c28b05ceba5a9cb0ff"
+    },
+    {
+      "path": "public/audio/previews/preview-17.mp3",
+      "bytes": 721197,
+      "sha256": "99cd8b61983887d4995f72594668be9182b42987e3dccda0380324b589896d38"
+    },
+    {
+      "path": "public/audio/previews/preview-18.mp3",
+      "bytes": 721197,
+      "sha256": "94c23ef436375da5c5b79d1f2e802207df99a70112ce34c20e297be71cb9b2cf"
+    },
+    {
+      "path": "public/audio/previews/preview-19.mp3",
+      "bytes": 721197,
+      "sha256": "6211fac1eaa20e97c5dd2b026db3bed2360811d964c3b2d8530e46645bba7c59"
+    },
+    {
+      "path": "public/audio/previews/preview-20.mp3",
+      "bytes": 721197,
+      "sha256": "318cea01dd5fc5a0088ae37ce8debd04a221296f31963a745899f6801d99741e"
+    },
+    {
+      "path": "public/audio/previews/preview-21.mp3",
+      "bytes": 721197,
+      "sha256": "156135a08b27e1dd712872f612ff1c1d3f763a560e4bb6ae98a11f3b64166ef3"
+    },
+    {
+      "path": "public/audio/previews/preview-22.mp3",
+      "bytes": 721197,
+      "sha256": "390f4df851ec10701192dc6e6bb2b34258fa1a75c749b96f550cb54c6a7f073b"
+    },
+    {
+      "path": "public/audio/previews/preview-23.mp3",
+      "bytes": 721197,
+      "sha256": "23a2c8c821cf1e328a1a82cd44bffccec09f24be5980bf91c8519e185ef084a3"
+    },
+    {
+      "path": "public/audio/previews/preview-24.mp3",
+      "bytes": 721197,
+      "sha256": "b3d1a33ec60c1bd6e644fc83caea1736ceae1f5b02c07671b0b2c07ec9754eb9"
+    },
+    {
+      "path": "public/audio/previews/preview-26.mp3",
+      "bytes": 721197,
+      "sha256": "5fe9b0fa66983b7e6c97081bcf3e65212667895bb7f87da85a6d0f6453c46682"
+    },
+    {
+      "path": "public/audio/previews/preview-27.mp3",
+      "bytes": 721197,
+      "sha256": "18b7d02c53e81713ab286e120a346710a08da00b9807d62eeeefa182924549e6"
+    },
+    {
+      "path": "public/audio/previews/preview-28.mp3",
+      "bytes": 721197,
+      "sha256": "001b1a1bda9ed30965f20d6674312f9fca81927759acc91392e566e27ff8af05"
+    },
+    {
+      "path": "public/audio/previews/preview-29.mp3",
+      "bytes": 721197,
+      "sha256": "baea14d99cd7c6eb0acd82c89a969c70cc68b63b69964f1fc1231c0ad7d746c0"
+    },
+    {
+      "path": "public/audio/previews/preview-30.mp3",
+      "bytes": 721197,
+      "sha256": "e278999e51868a12bb01fa83626b2d6451fd0587d67f24eac5efff2fecc2d917"
+    },
+    {
+      "path": "public/audio/previews/preview-31.mp3",
+      "bytes": 721197,
+      "sha256": "38a48e2a83a9d6ea60e5fc880b075064eab3b33e4fe1c1514e639f652b23ca47"
+    },
+    {
+      "path": "public/audio/previews/preview-32.mp3",
+      "bytes": 721197,
+      "sha256": "60c34e75b0faea4bbff104c8e235425e7b29f35dc8f9cb71a6b5ac56009bb0c6"
+    },
+    {
+      "path": "public/audio/previews/preview-33.mp3",
+      "bytes": 721197,
+      "sha256": "757c937ea87a9e2fded232faa1a3b58a358c9978e8f6093897542c1671d01b61"
+    },
+    {
+      "path": "public/audio/previews/preview-34.mp3",
+      "bytes": 721197,
+      "sha256": "a45e73dd61ecb986b781cc726a0c0a72e2e06cd22a84a04c2ddca41755918ab6"
+    },
+    {
+      "path": "public/audio/previews/preview-35.mp3",
+      "bytes": 721197,
+      "sha256": "3e73375b0ebf5d124daaa186220cd4180b499d886f6a711647f59d835926dfe7"
+    },
+    {
+      "path": "public/audio/previews/preview-36.mp3",
+      "bytes": 721197,
+      "sha256": "b8b0fcefefed2a6301cf7b4d90023bd14b26233e54abb9a423aaad3806bd669a"
+    },
+    {
+      "path": "public/audio/previews/preview-37.mp3",
+      "bytes": 721197,
+      "sha256": "78b11b6d3ae3ce6b9288e56c20f5492ad22f5b2b5b67cd90ef436c27ca2ee7f0"
+    },
+    {
+      "path": "public/audio/previews/preview-38.mp3",
+      "bytes": 721197,
+      "sha256": "005866c40911d5321c262fa1152fac3eb9dc14b609fc21086b1cc45a05142e16"
+    },
+    {
+      "path": "public/audio/through-the-past.mp3",
+      "bytes": 6217389,
+      "sha256": "e6edcf1bba5d1aac23b56ab8555293aca4240dc78b1624af1fbfb78729a8453b"
+    },
+    {
+      "path": "public/audio/wuwo.mp3",
+      "bytes": 6654573,
+      "sha256": "e5b2537d8d8b65d1ba121e136a291380a0926c8b7e143105d8488fa31c2d3b61"
+    },
+    {
+      "path": "public/favicon.svg",
+      "bytes": 261,
+      "sha256": "b0254c0f519a9d97bae6b341c4420fab7a6c3d60bbf58b8efc25928d0dbdae68"
+    },
+    {
+      "path": "public/identity/portrait.png",
+      "bytes": 2185615,
+      "sha256": "9e382edeb64c01896fe21050441ac1c9b9d96e038c2b87e46ae2388cbed5f77c"
+    },
+    {
+      "path": "public/identity/wechat-qr.png",
+      "bytes": 171493,
+      "sha256": "f00a6c017c802169c83daafea3dcb306165a95eec2e83eee81c298c2e740877d"
+    }
+  ]
+}
